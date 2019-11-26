@@ -1,4 +1,4 @@
-# WPIERDOL APKA
+# DANGER ZONE
 
 ## BRANCHING
 General convention for branches names are: `<feature_name>-<user_name>`.
