@@ -1,0 +1,34 @@
+{
+  "name": "danger-zone",
+  "version": "0.1.0",
+  "description": "Wujek Guzy project",
+  "repository": "https://github.com/gorrion-io/danger-zone.git",
+  "author": "Gorrion & KN Fullstack",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "start": "docker-compose up --build --remove-orphans -d && docker-compose logs -f -t",
+    "stop": "docker-compose stop",
+    "down": "docker-compose down",
+    "logs": "docker-compose logs -f -t"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "server/src/**/*.ts": [
+      "tslint --fix",
+      "prettier --write",
+      "git add"
+    ]
+  },
+  "devDependencies": {
+    "eslint": "^6.7.1",
+    "husky": "^3.1.0",
+    "lint-staged": "^9.4.3",
+    "prettier": "^1.19.1",
+    "tslint": "^5.20.1"
+  }
+}
