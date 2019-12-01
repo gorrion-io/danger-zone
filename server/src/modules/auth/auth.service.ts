@@ -16,6 +16,13 @@ export class AuthService {
     tokenResponse.token = jwt.sign(tokenPayload, process.env.JWT_SECRET, {
       expiresIn: '24h',
     });
+    tokenResponse.refreshToken = jwt.sign(
+      tokenPayload,
+      process.env.REFRESH_JWT_SECRET,
+      {
+        expiresIn: '96h',
+      },
+    );
 
     return tokenResponse;
   }
@@ -25,6 +32,19 @@ export class AuthService {
       token,
       process.env.JWT_SECRET,
     ) as ICurrentUser;
+
+    return currentUser;
+  }
+
+  refreshToken(refreshToken: string): ICurrentUser {
+    const currentUser: ICurrentUser = jwt.verify(
+      refreshToken,
+      process.env.REFRESH_JWT_SECRET,
+    ) as ICurrentUser;
+
+    if (currentUser) {
+      this.generateToken(currentUser);
+    }
 
     return currentUser;
   }
