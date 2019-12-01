@@ -13,6 +13,4 @@ export class EditReportInput {
   @Field({ nullable: true })
   description?: string;
 
-  @Field(() => ObjectIdScalar)
-  reportedBy: ObjectId; // remove it later
 }

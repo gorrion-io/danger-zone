@@ -6,7 +6,6 @@
 input AddReportInput {
   title: String!
   description: String!
-  reportedBy: ObjectId!
 }
 
 input AddUserInput {
@@ -17,7 +16,6 @@ input EditReportInput {
   _id: ObjectId!
   title: String
   description: String
-  reportedBy: ObjectId!
 }
 
 input EditUserInput {

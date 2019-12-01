@@ -6,6 +6,8 @@ import { AddReportInput } from './models/add-report.input';
 import { EditReportInput } from './models/edit-report.input';
 import { Report } from './models/report.schema';
 import { ReportsService } from './reports.service';
+import { CurrentUser } from '../auth/decorators/user.decorator';
+import { User } from '../users/models/user.schema';
 
 @Resolver(() => Report)
 export class ReportsResolver {
@@ -26,15 +28,16 @@ export class ReportsResolver {
   @Mutation(() => Report)
   @UseGuards(AuthGuard)
   async addReport(
-    @Args('report') reportInput: AddReportInput,
+    @Args('report') reportInput: AddReportInput, @CurrentUser() user: User,
   ): Promise<Report> {
-    return this.reportsService.add(reportInput);
+
+    return this.reportsService.add(reportInput, user._id);
   }
 
   @Mutation(() => Report)
   async editReport(
-    @Args('report') reportInput: EditReportInput,
+    @Args('report') reportInput: EditReportInput, @CurrentUser() user: User,
   ): Promise<Report> {
-    return this.reportsService.edit(reportInput);
+    return this.reportsService.edit(reportInput, user._id);
   }
 }

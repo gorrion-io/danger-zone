@@ -10,6 +10,4 @@ export class AddReportInput {
   @Field()
   description: string;
 
-  @Field(() => ObjectIdScalar)
-  reportedBy: ObjectId; // remove it later
 }
