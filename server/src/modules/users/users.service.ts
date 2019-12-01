@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { ReturnModelType } from '@typegoose/typegoose';
 import { ObjectId } from 'mongodb';
-import { hashPassword } from '../../utils/hash-password';
+import { ObjectIdScalar } from '../common/graphql-scalars/object-id.scalar';
 import { AddUserInput } from './models/add-user.input';
 import { EditUserInput } from './models/edit-user.input';
 import { User } from './models/user.schema';
@@ -16,6 +16,10 @@ export class UsersService {
 
   async findAll(): Promise<User[]> {
     return this.userModel.find().exec();
+  }
+
+  async findOne(id: ObjectIdScalar): Promise<User> {
+    return this.userModel.findById(id);
   }
 
   async add(dto: AddUserInput): Promise<User> {
