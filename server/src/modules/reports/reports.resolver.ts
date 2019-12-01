@@ -1,6 +1,7 @@
 import { Inject, UseGuards } from '@nestjs/common';
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { AuthGuard } from '../auth/guards/user-auth.guard';
+import { ICurrentUser } from '../auth/interfaces/current-user.interface';
 import { ObjectIdScalar } from '../common/graphql-scalars/object-id.scalar';
 import { AddReportInput } from './models/add-report.input';
 import { EditReportInput } from './models/edit-report.input';
@@ -27,14 +28,16 @@ export class ReportsResolver {
   @UseGuards(AuthGuard)
   async addReport(
     @Args('report') reportInput: AddReportInput,
+    @Context('user') user: ICurrentUser,
   ): Promise<Report> {
-    return this.reportsService.add(reportInput);
+    return this.reportsService.add(reportInput, user);
   }
 
   @Mutation(() => Report)
   async editReport(
     @Args('report') reportInput: EditReportInput,
+    @Context('user') user: ICurrentUser,
   ): Promise<Report> {
-    return this.reportsService.edit(reportInput);
+    return this.reportsService.edit(reportInput, user);
   }
 }

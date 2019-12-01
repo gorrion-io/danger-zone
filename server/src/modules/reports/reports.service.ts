@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { ReturnModelType } from '@typegoose/typegoose';
 import { ObjectIdScalar } from '../common/graphql-scalars/object-id.scalar';
+import { ICurrentUser } from '../auth/interfaces/current-user.interface';
 import { AddReportInput } from './models/add-report.input';
 import { EditReportInput } from './models/edit-report.input';
 import { Report } from './models/report.schema';
@@ -21,16 +22,17 @@ export class ReportsService {
     return this.reportModel.findById(id);
   }
 
-  async add(dto: AddReportInput): Promise<Report> {
+  async add(dto: AddReportInput, user: ICurrentUser): Promise<Report> {
     const report = new this.reportModel();
+    report.reportedBy = user._id;
     Object.assign(report, dto);
 
     return report.save();
   }
 
-  async edit(dto: EditReportInput): Promise<Report> {
+  async edit(dto: EditReportInput, user: ICurrentUser): Promise<Report> {
     const report = await this.reportModel.findById(dto._id);
-    if (!report || !report.reportedBy.equals(dto.reportedBy)) {
+    if (!report || !report.reportedBy.equals(user._id)) {
       throw new Error(`Report with id: "${dto._id}" not found.`);
     }
     Object.assign(report, dto);
