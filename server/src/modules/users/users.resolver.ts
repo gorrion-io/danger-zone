@@ -1,7 +1,8 @@
-import { Inject } from '@nestjs/common';
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Inject, UseGuards } from '@nestjs/common';
+import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { ObjectId } from 'bson';
 import { AuthService } from '../auth/auth.service';
+import { AuthGuard } from '../auth/guards/user-auth.guard';
 import { TokenModel } from '../auth/models/token.model';
 import { ObjectIdScalar } from '../common/graphql-scalars/object-id.scalar';
 import { AddUserInput } from './models/add-user.input';
@@ -38,5 +39,18 @@ export class UsersResolver {
     @Args({ name: 'userId', type: () => ObjectIdScalar }) userId: ObjectId,
   ): Promise<ObjectId> {
     return this.usersService.delete(userId);
+  }
+
+  @Mutation(() => TokenModel)
+  @UseGuards(AuthGuard)
+  async refreshToken(
+    @Context('userId') userId: ObjectIdScalar,
+  ): Promise<TokenModel> {
+    const user = await this.usersService.findOne(userId);
+    if (!user) {
+      throw new Error('Invalid data');
+    }
+
+    return this.authService.generateToken(user);
   }
 }

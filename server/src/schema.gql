@@ -28,6 +28,7 @@ type Mutation {
   addUser(user: AddUserInput!): TokenModel!
   editUser(user: EditUserInput!): User!
   deleteUser(userId: ObjectId!): ObjectId!
+  refreshToken: TokenModel!
   addReport(report: AddReportInput!): Report!
   editReport(report: EditReportInput!): Report!
 }
@@ -50,6 +51,7 @@ type Report {
 
 type TokenModel {
   token: String!
+  refreshToken: String!
 }
 
 type User {
