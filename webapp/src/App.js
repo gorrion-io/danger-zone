@@ -1,25 +1,22 @@
+import { ApolloProvider } from '@apollo/react-hooks';
+import { Layout } from 'antd';
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { client } from './ApolloClient';
+import { LoginForm } from './modules/loginForm/login-form.component';
+
+const { Header, Content, Footer } = Layout;
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <ApolloProvider client={client}>
+      <Layout>
+        <Header>HEDER</Header>
+        <Content>
+          <LoginForm />
+        </Content>
+        <Footer>&copy; {new Date().getFullYear()} Danger Zone</Footer>
+      </Layout>
+    </ApolloProvider>
   );
 }
 

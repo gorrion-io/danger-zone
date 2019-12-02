@@ -1,0 +1,7 @@
+{
+  "extends": ["eslint:recommended"],
+  "rules": {
+    "quotes": ["error", "single"],
+    "max-len": ["error", "150"]
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "jsxBracketSameLine": true,
+  "printWidth": 150,
+  "arrowParens": "always",
+  "jsxSingleQuote": true,
+  "trailingComma": "all",
+  "semi": true,
+  "singleQuote": true,
+  "tabWidth": 2
+}

@@ -22,6 +22,11 @@
       "tslint --fix",
       "prettier --write",
       "git add"
+    ],
+    "webapp/src/**/*.js": [
+      "eslint --fix",
+      "prettier --write",
+      "git add"
     ]
   },
   "devDependencies": {
