@@ -39,6 +39,7 @@ type Query {
   findAllUsers: [User!]!
   findAllReports: [Report!]!
   findReport(id: ObjectId!): Report!
+  refreshToken(token: String!): TokenModel!
 }
 
 type Report {
@@ -49,7 +50,8 @@ type Report {
 }
 
 type TokenModel {
-  token: String!
+  accessToken: String!
+  refreshToken: String!
 }
 
 type User {

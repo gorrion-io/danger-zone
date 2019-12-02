@@ -13,10 +13,13 @@ export class AuthService {
     };
 
     const tokenResponse = new TokenModel();
-    tokenResponse.token = jwt.sign(tokenPayload, process.env.JWT_SECRET, {
+
+    tokenResponse.accessToken = jwt.sign(tokenPayload, process.env.JWT_SECRET, {
+      expiresIn: '15min',
+    });
+    tokenResponse.refreshToken = jwt.sign(tokenPayload, process.env.JWT_SECRET, {
       expiresIn: '24h',
     });
-
     return tokenResponse;
   }
 
@@ -27,5 +30,14 @@ export class AuthService {
     ) as ICurrentUser;
 
     return currentUser;
+  }
+
+  refreshToken(token: string): TokenModel {
+    const loggedUser = this.verifyToken(token);
+    if (!!loggedUser) {
+      return this.generateToken(loggedUser);
+    } else {
+      throw new Error(`Token expired`);
+    }
   }
 }
