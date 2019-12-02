@@ -14,7 +14,7 @@ export class UsersResolver {
   constructor(
     @Inject(UsersService) private readonly usersService: UsersService,
     @Inject(AuthService) private readonly authService: AuthService,
-  ) {}
+  ) { }
 
   @Query(() => [User])
   async findAllUsers(): Promise<User[]> {
@@ -38,5 +38,10 @@ export class UsersResolver {
     @Args({ name: 'userId', type: () => ObjectIdScalar }) userId: ObjectId,
   ): Promise<ObjectId> {
     return this.usersService.delete(userId);
+  }
+
+  @Mutation(() => TokenModel)
+  async refreshAccessToken(@Args('refreshToken') refreshToken: string): Promise<TokenModel> {
+    return this.authService.refreshAccessToken(refreshToken, id => this.usersService.find(id));
   }
 }
