@@ -4,4 +4,4 @@ import { ObjectIdScalar } from './graphql-scalars/object-id.scalar';
 @Module({
   providers: [ObjectIdScalar],
 })
-export class CommonModule {}
+export class CommonModule { }
