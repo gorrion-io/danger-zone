@@ -39,9 +39,4 @@ export class UsersResolver {
   ): Promise<ObjectId> {
     return this.usersService.delete(userId);
   }
-
-  @Mutation(() => TokenModel)
-  async refreshAccessToken(@Args('refreshToken') refreshToken: string): Promise<TokenModel> {
-    return this.authService.refreshAccessToken(refreshToken, id => this.usersService.find(id));
-  }
 }

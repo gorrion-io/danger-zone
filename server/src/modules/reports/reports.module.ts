@@ -6,7 +6,7 @@ import { Report, ReportSchema } from './models/report.schema';
 import { ReportsResolver } from './reports.resolver';
 import { ReportsService } from './reports.service';
 
-const services = [ReportsService, AuthService];
+const services = [ReportsService];
 const resolvers = [ReportsResolver];
 
 @Module({
@@ -16,4 +16,4 @@ const resolvers = [ReportsResolver];
   ],
   providers: [...services, ...resolvers],
 })
-export class ReportsModule {}
+export class ReportsModule { }

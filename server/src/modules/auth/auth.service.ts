@@ -1,13 +1,15 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import * as jwt from 'jsonwebtoken';
 import { User } from '../users/models/user.schema';
 import { ICurrentUser } from './interfaces/current-user.interface';
 import { TokenModel } from './models/token.model';
 import { ObjectId } from 'bson';
+import { UsersService } from '../users/users.service';
 
 @Injectable()
 export class AuthService {
   constructor(
+    @Inject(UsersService) private readonly usersService: UsersService
   ) { }
 
   generateToken(user: User): TokenModel {
@@ -28,14 +30,14 @@ export class AuthService {
     return tokenResponse;
   }
 
-  async refreshAccessToken(refreshToken: string, findUserById: (id: ObjectId) => Promise<User>): Promise<TokenModel> {
+  async refreshAccessToken(refreshToken: string): Promise<TokenModel> {
     const userPayload = this.verifyToken(refreshToken, this.getRefreshTokenSecret());
 
     if (!userPayload) {
       throw Error('Invalid refresh token.');
     }
 
-    const user = await findUserById(userPayload._id);
+    const user = await this.usersService.find(userPayload._id);
     if (!user) {
       throw Error('User not found.');
     }

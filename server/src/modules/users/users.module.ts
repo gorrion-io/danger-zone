@@ -6,7 +6,7 @@ import { User, UserSchema } from './models/user.schema';
 import { UsersResolver } from './users.resolver';
 import { UsersService } from './users.service';
 
-const services = [UsersService, AuthService];
+const services = [UsersService];
 const resolvers = [UsersResolver];
 
 @Module({
@@ -15,5 +15,6 @@ const resolvers = [UsersResolver];
     CommonModule,
   ],
   providers: [...services, ...resolvers],
+  exports: [UsersService],
 })
-export class UsersModule {}
+export class UsersModule { }

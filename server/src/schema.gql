@@ -28,9 +28,9 @@ type Mutation {
   addUser(user: AddUserInput!): TokenModel!
   editUser(user: EditUserInput!): User!
   deleteUser(userId: ObjectId!): ObjectId!
-  refreshAccessToken(refreshToken: String!): TokenModel!
   addReport(report: AddReportInput!): Report!
   editReport(report: EditReportInput!): Report!
+  refreshAccessToken(refreshToken: String!): TokenModel!
 }
 
 """Mongo object id scalar type"""
