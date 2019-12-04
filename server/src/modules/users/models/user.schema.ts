@@ -23,12 +23,12 @@ export class User {
   @Property()
   password?: string;
 
-  @Field(type => Role)
+  @Field(() => [Role])
   @Property({
     required: true,
-    default: Role.USER,
+    default: [Role.USER],
   })
-  role: Role;
+  roles: Role[];
 }
 
 export const UserSchema: Schema<typeof User> = buildSchema(User);

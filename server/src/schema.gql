@@ -66,5 +66,5 @@ type User {
   userName: String!
   email: String
   password: String
-  role: Role!
+  roles: [Role!]!
 }
