@@ -50,6 +50,13 @@ type Report {
   reportedBy: ObjectId!
 }
 
+"""User role"""
+enum Role {
+  USER
+  ADMIN
+  MODERATOR
+}
+
 type TokenModel {
   token: String!
 }
@@ -59,4 +66,5 @@ type User {
   userName: String!
   email: String
   password: String
+  role: Role!
 }
