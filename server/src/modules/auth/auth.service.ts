@@ -17,23 +17,23 @@ export class AuthService {
     tokenResponse.accessToken = jwt.sign(tokenPayload, process.env.JWT_SECRET, {
       expiresIn: '15min',
     });
-    tokenResponse.refreshToken = jwt.sign(tokenPayload, process.env.JWT_SECRET, {
-      expiresIn: '24h',
+    tokenResponse.refreshToken = jwt.sign(tokenPayload, process.env.JWT_SECRET_JWT, {
+      expiresIn: '7d',
     });
     return tokenResponse;
   }
 
-  verifyToken(token: string): ICurrentUser {
+  verifyToken(token: string, secret: string = process.env.JWT_SECRET): ICurrentUser {
     const currentUser: ICurrentUser = jwt.verify(
       token,
-      process.env.JWT_SECRET,
+      secret,
     ) as ICurrentUser;
 
     return currentUser;
   }
 
   refreshToken(token: string): TokenModel {
-    const loggedUser = this.verifyToken(token);
+    const loggedUser = this.verifyToken(token, process.env.JWT_SECRET_REFRESH);
     if (!!loggedUser) {
       return this.generateToken(loggedUser);
     } else {

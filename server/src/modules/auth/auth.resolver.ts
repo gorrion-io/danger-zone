@@ -10,7 +10,7 @@ export class AuthResolver {
     @Inject(AuthService) private readonly authService: AuthService,
   ) {}
 
-  @Query(() => TokenModel)
+  @Mutation(() => TokenModel)
   async refreshToken(@Args('token') token: string): Promise<TokenModel> {
     return this.authService.refreshToken(token);
   }

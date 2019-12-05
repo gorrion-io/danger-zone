@@ -8,6 +8,7 @@ import { Report } from './models/report.schema';
 import { ReportsService } from './reports.service';
 import { CurrentUser } from '../auth/decorators/user.decorator';
 import { User } from '../users/models/user.schema';
+import { ICurrentUser } from '../auth/interfaces/current-user.interface';
 
 @Resolver(() => Report)
 export class ReportsResolver {
@@ -28,7 +29,7 @@ export class ReportsResolver {
   @Mutation(() => Report)
   @UseGuards(AuthGuard)
   async addReport(
-    @Args('report') reportInput: AddReportInput, @CurrentUser() user: User,
+    @Args('report') reportInput: AddReportInput, @CurrentUser() user: ICurrentUser,
   ): Promise<Report> {
 
     return this.reportsService.add(reportInput, user._id);
@@ -36,7 +37,7 @@ export class ReportsResolver {
 
   @Mutation(() => Report)
   async editReport(
-    @Args('report') reportInput: EditReportInput, @CurrentUser() user: User,
+    @Args('report') reportInput: EditReportInput, @CurrentUser() user: ICurrentUser,
   ): Promise<Report> {
     return this.reportsService.edit(reportInput, user._id);
   }
