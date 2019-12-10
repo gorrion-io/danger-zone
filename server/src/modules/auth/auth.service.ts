@@ -3,6 +3,7 @@ import * as jwt from 'jsonwebtoken';
 import { User } from '../users/models/user.schema';
 import { ICurrentUser } from './interfaces/current-user.interface';
 import { TokenModel } from './models/token.model';
+import { ROLE } from '../../constants/enums'
 
 @Injectable()
 export class AuthService {
@@ -10,6 +11,7 @@ export class AuthService {
     const tokenPayload: ICurrentUser = {
       _id: user._id,
       userName: user.userName,
+      role: user.role
     };
 
     const tokenResponse = new TokenModel();
@@ -27,5 +29,25 @@ export class AuthService {
     ) as ICurrentUser;
 
     return currentUser;
+  }
+
+  authChecker(user: ICurrentUser, roles: ROLE[]) {
+    if (roles.length === 0) {
+      // if `@Authorized()`, check only is user exist
+      return user !== undefined;
+    }
+    // there are some roles defined now
+
+    if (!user) {
+      // and if no user, restrict access
+      return false;
+    }
+    if (roles.includes(user.role)) {
+      // grant access if the roles overlap
+      return true;
+    }
+
+    // no roles matched, restrict access
+    return false;
   }
 }

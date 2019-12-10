@@ -12,10 +12,14 @@ export class UsersService {
   constructor(
     @InjectModel(User.name)
     private readonly userModel: ReturnModelType<typeof User>,
-  ) {}
+  ) { }
 
   async findAll(): Promise<User[]> {
     return this.userModel.find().exec();
+  }
+
+  async find(id: ObjectId): Promise<User> {
+    return this.userModel.findById(id)
   }
 
   async add(dto: AddUserInput): Promise<User> {

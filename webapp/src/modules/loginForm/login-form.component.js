@@ -18,6 +18,7 @@ export const LoginForm = () => {
       <Button
         onClick={async () => {
           const { data } = await login({ variables: { userName: username } });
+          console.log(data.addUser.token)
           alert(data.addUser.token);
         }}>
         Create account

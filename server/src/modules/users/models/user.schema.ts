@@ -1,3 +1,4 @@
+import { ROLE } from './../../../constants/enums';
 import { buildSchema, prop as Property } from '@typegoose/typegoose';
 import { ObjectId } from 'bson';
 import { Schema } from 'mongoose';
@@ -20,6 +21,10 @@ export class User {
   @Field({ nullable: true })
   @Property()
   password?: string;
+
+  @Field()
+  @Property({ required: false })
+  role: ROLE;
 }
 
 export const UserSchema: Schema<typeof User> = buildSchema(User);

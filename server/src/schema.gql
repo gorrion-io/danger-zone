@@ -11,6 +11,7 @@ input AddReportInput {
 
 input AddUserInput {
   userName: String!
+  role: String = "ADMIN"
 }
 
 input EditReportInput {
@@ -26,6 +27,10 @@ input EditUserInput {
   email: String
 }
 
+input FindByIdInput {
+  _id: ObjectId!
+}
+
 type Mutation {
   addUser(user: AddUserInput!): TokenModel!
   editUser(user: EditUserInput!): User!
@@ -39,6 +44,7 @@ scalar ObjectId
 
 type Query {
   findAllUsers: [User!]!
+  findUser(user: FindByIdInput!): User!
   findAllReports: [Report!]!
   findReport(id: ObjectId!): Report!
 }
@@ -50,6 +56,17 @@ type Report {
   reportedBy: ObjectId!
 }
 
+input RoleInput {
+  role: Roles!
+}
+
+"""Roles linked with user"""
+enum Roles {
+  User
+  Admin
+  Moderator
+}
+
 type TokenModel {
   token: String!
 }
@@ -59,4 +76,5 @@ type User {
   userName: String!
   email: String
   password: String
+  role: String!
 }
