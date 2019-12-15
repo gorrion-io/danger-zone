@@ -25,9 +25,10 @@ input EditUserInput {
 }
 
 type Mutation {
-  addUser(user: AddUserInput!): TokenModel!
+  addUser(user: AddUserInput!): User!
   editUser(user: EditUserInput!): User!
   deleteUser(userId: ObjectId!): ObjectId!
+  token(signIn: SignInInput!): TokenModel!
   addReport(report: AddReportInput!): Report!
   editReport(report: EditReportInput!): Report!
 }
@@ -48,8 +49,15 @@ type Report {
   reportedBy: ObjectId!
 }
 
+input SignInInput {
+  grantType: String!
+  userName: String
+  refreshToken: String
+}
+
 type TokenModel {
   token: String!
+  refreshToken: String!
 }
 
 type User {

@@ -4,4 +4,6 @@ import { Field, ObjectType } from 'type-graphql';
 export class TokenModel {
   @Field()
   token: string;
+  @Field()
+  refreshToken: string;
 }
