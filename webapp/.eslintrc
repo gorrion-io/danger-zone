@@ -1,7 +1,26 @@
 {
-  "extends": ["eslint:recommended"],
+  "extends": [
+    "eslint:recommended",
+    "plugin:react/recommended"
+  ],
   "rules": {
-    "quotes": ["error", "single"],
-    "max-len": ["error", "150"]
+    "quotes": [
+      "error",
+      "single"
+    ],
+    "max-len": [
+      "error",
+      150
+    ],
+    "react/prop-types": [
+      "off"
+    ]
+  },
+  "parserOptions": {
+    "sourceType": "module",
+    "ecmaVersion": 6,
+    "ecmaFeatures": {
+      "jsx": true
+    }
   }
 }
