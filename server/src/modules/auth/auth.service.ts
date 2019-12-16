@@ -17,8 +17,9 @@ export class AuthService {
   async signIn(signInInput: SignInInput): Promise<TokenModel> {
     switch (signInInput.grantType) {
       case GrantType.AccessToken:
-        const userName = new ObjectId(signInInput.userName.split('-')[1]);
-        const user = await this.usersService.findOne(userName);
+        const id = signInInput.userName.split('-').pop();
+        const userId = new ObjectId(id);
+        const user = await this.usersService.findOne(userId);
         return this.generateToken(user);
       case GrantType.RefreshToken:
         return this.refreshToken(signInInput.refreshToken);
