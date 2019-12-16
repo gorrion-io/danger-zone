@@ -1,11 +1,11 @@
-version: "3"
+version: '3'
 services:
   server:
     env_file: .env
     build: ./server
     restart: always
     ports:
-      - "5000:5000"
+      - '5000:5000'
     volumes:
       - ./server/src:/usr/server/src
     depends_on:
@@ -15,13 +15,17 @@ services:
     build: ./webapp
     restart: always
     ports:
-      - "3000:3000"
+      - '3000:3000'
     volumes:
       - ./webapp/src:/usr/webapp/src
       - ./webapp/public:/usr/webapp/public
+    environment:
+      PORT: 3000
+      CHOKIDAR_USEPOLLING: 1
+      CHOKIDAR_POLLINTERVAL: 3000
 
   mongo:
     image: mongo
     restart: always
     ports:
-      - "27017:27017"
+      - '27017:27017'
