@@ -19,6 +19,10 @@ services:
     volumes:
       - ./webapp/src:/usr/webapp/src
       - ./webapp/public:/usr/webapp/public
+    environment: 
+      PORT: 3000
+      CHOKIDAR_USEPOLLING: 1
+      CHOKIDAR_POLLINTERVAL: 3000
 
   mongo:
     image: mongo

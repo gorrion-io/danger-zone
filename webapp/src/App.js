@@ -3,6 +3,7 @@ import { Layout } from 'antd';
 import React from 'react';
 import { client } from './ApolloClient';
 import { LoginForm } from './modules/loginForm/login-form.component';
+import { ReportList } from './modules/reports/report-list.component';
 
 const { Header, Content, Footer } = Layout;
 
@@ -13,6 +14,7 @@ function App() {
         <Header>HEDER</Header>
         <Content>
           <LoginForm />
+          <ReportList />
         </Content>
         <Footer>&copy; {new Date().getFullYear()} Danger Zone</Footer>
       </Layout>
