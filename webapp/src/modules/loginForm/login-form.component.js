@@ -20,7 +20,7 @@ export const LoginForm = () => {
           const { data } = await login({ variables: { userName: username } });
           alert(data.addUser.token);
         }}>
-        Create account
+        Create an account
       </Button>
     </div>
   );

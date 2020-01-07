@@ -1,7 +1,20 @@
 {
-  "extends": ["eslint:recommended"],
+  "env": {
+    "browser": true
+  },
+  "parser": "babel-eslint",
+  "extends": ["eslint:recommended", "plugin:react/recommended"],
   "rules": {
     "quotes": ["error", "single"],
-    "max-len": ["error", "150"]
+    "max-len": ["error", {
+      "code": 150
+    }]
+  },
+  "parserOptions": {
+    "sourceType": "module",
+    "ecmaVersion": 6,
+    "ecmaFeatures": {
+      "jsx": true
+    }
   }
 }
