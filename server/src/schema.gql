@@ -53,6 +53,11 @@ input SignInInput {
   grantType: String!
   userName: String
   refreshToken: String
+
+enum Role {
+  USER
+  ADMIN
+  MODERATOR
 }
 
 type TokenModel {
@@ -65,4 +70,5 @@ type User {
   userName: String!
   email: String
   password: String
+  roles: [Role!]!
 }
