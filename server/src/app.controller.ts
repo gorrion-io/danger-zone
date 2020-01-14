@@ -12,12 +12,4 @@ export class AppController {
   getHello(): string {
     return this.appService.getHello();
   }
-
-  // Test method to try out the RolesGuard with Roles decorator
-  @Get('test')
-  @UseGuards(RolesGuard)
-  @Roles(Role.USER)
-  testGet(): string {
-    return 'test method';
-  }
 }

@@ -42,4 +42,3 @@ jspm_packages/
 
 # Ignore all local history of files
 .history
-package-lock.json

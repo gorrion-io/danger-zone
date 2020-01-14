@@ -6,6 +6,7 @@ import { ObjectIdScalar } from '../common/graphql-scalars/object-id.scalar';
 import { AddUserInput } from './models/add-user.input';
 import { EditUserInput } from './models/edit-user.input';
 import { User } from './models/user.schema';
+import { Role } from './models/user-roles.enum';
 
 @Injectable()
 export class UsersService {
@@ -49,5 +50,9 @@ export class UsersService {
 
     await user.remove();
     return id;
+  }
+
+  async findAllInRole(role: Role): Promise<User[]> {
+    return this.userModel.find({ roles: role }).exec();
   }
 }
