@@ -2,7 +2,7 @@ import { ApolloProvider } from '@apollo/react-hooks';
 import { Layout } from 'antd';
 import React from 'react';
 import { client } from './ApolloClient';
-import { LoginForm } from './modules/loginForm/login-form.component';
+import { LoginRegistrationPage } from './modules/loginRegistrationPage/login-registration-page.component';
 import { ReportList } from './modules/reportList/report-list.component';
 
 const { Header, Content, Footer } = Layout;
@@ -13,7 +13,7 @@ function App() {
       <Layout>
         <Header>HEDER</Header>
         <Content>
-          <LoginForm />
+          <LoginRegistrationPage />
           <ReportList />
         </Content>
         <Footer>&copy; {new Date().getFullYear()} Danger Zone</Footer>
