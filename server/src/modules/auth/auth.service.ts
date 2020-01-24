@@ -67,6 +67,27 @@ export class AuthService {
     return this.generateToken(user);
   }
 
+  async loginByMagicLink(id: string): Promise<Token | ErrorResponse> {
+    const user = await this.userModel.findOne({ magicLinkId: id });
+    if (!user) {
+      return new ErrorResponse(`User for specified link does not exist.`);
+    }
+
+    const mlTime = Number(process.env.MAGIC_LINK_TIME);
+    const dateNow = new Date();
+    const createdDate = new Date(user.magicLinkCreatedAt);
+
+    createdDate.setSeconds(
+      createdDate.getSeconds() + mlTime ? mlTime : 300, // 5 minutes default
+    );
+
+    if (createdDate < dateNow) {
+      return new ErrorResponse(`Link has expired.`);
+    }
+
+    return this.generateToken(user);
+  }
+
   async getMagicLink(magicLinkParam: MagicLinkInput): Promise<string> {
     const user = await this.userModel.findById(magicLinkParam._id);
     if (!user) {

@@ -32,6 +32,13 @@ export class AuthResolver {
     return this.authService.login(param);
   }
 
+  @Mutation(() => TokenUnion)
+  async loginByMagicLink(
+    @Args('magicLinkId') id: string,
+  ): Promise<Token | ErrorResponse> {
+    return this.authService.loginByMagicLink(id);
+  }
+
   @Mutation(() => MagicLinkUnion)
   async sendMagicLink(
     @Args('magicLinkParam') magicLinkParam: MagicLinkInput,
