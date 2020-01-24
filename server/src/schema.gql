@@ -26,10 +26,29 @@ input EditUserInput {
   email: String
 }
 
+type ErrorResponse {
+  message: String!
+}
+
+input LoginUserInput {
+  email: String!
+  password: String!
+}
+
+union MagicLink = SuccessResponse | ErrorResponse
+
+input MagicLinkInput {
+  _id: ObjectId!
+  email: String!
+}
+
 type Mutation {
-  addUser(user: AddUserInput!): TokenModel!
+  addUser(user: AddUserInput!): Token!
   editUser(user: EditUserInput!): User!
   deleteUser(userId: ObjectId!): ObjectId!
+  register(registerUserParam: RegisterUserInput!): Token!
+  login(loginUserParam: LoginUserInput!): Token!
+  sendMagicLink(magicLinkParam: MagicLinkInput!): MagicLink!
   addReport(report: AddReportInput!): Report!
   editReport(report: EditReportInput!): Report!
 }
@@ -43,6 +62,12 @@ type Query {
   findReport(id: ObjectId!): Report!
 }
 
+input RegisterUserInput {
+  _id: ObjectId!
+  email: String!
+  password: String!
+}
+
 type Report {
   _id: ObjectId!
   title: String!
@@ -50,7 +75,11 @@ type Report {
   reportedBy: ObjectId!
 }
 
-type TokenModel {
+type SuccessResponse {
+  message: String!
+}
+
+type Token {
   token: String!
 }
 

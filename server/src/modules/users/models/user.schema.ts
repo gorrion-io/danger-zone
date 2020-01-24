@@ -20,6 +20,11 @@ export class User {
   @Field({ nullable: true })
   @Property()
   password?: string;
-}
 
+  @Property()
+  magicLinkId?: string;
+
+  @Property()
+  magicLinkCreatedAt?: Date;
+}
 export const UserSchema: Schema<typeof User> = buildSchema(User);

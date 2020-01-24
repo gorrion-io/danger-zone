@@ -2,7 +2,7 @@ import { Inject } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { ObjectId } from 'bson';
 import { AuthService } from '../auth/auth.service';
-import { TokenModel } from '../auth/models/token.model';
+import { Token } from '../auth/models/token.model';
 import { ObjectIdScalar } from '../common/graphql-scalars/object-id.scalar';
 import { AddUserInput } from './models/add-user.input';
 import { EditUserInput } from './models/edit-user.input';
@@ -21,8 +21,8 @@ export class UsersResolver {
     return this.usersService.findAll();
   }
 
-  @Mutation(() => TokenModel)
-  async addUser(@Args('user') userInput: AddUserInput): Promise<TokenModel> {
+  @Mutation(() => Token)
+  async addUser(@Args('user') userInput: AddUserInput): Promise<Token> {
     const user = await this.usersService.add(userInput);
 
     return this.authService.generateToken(user);

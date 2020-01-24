@@ -1,7 +1,7 @@
 import { Field, ObjectType } from 'type-graphql';
 
 @ObjectType()
-export class TokenModel {
+export class Token {
   @Field()
   token: string;
 }

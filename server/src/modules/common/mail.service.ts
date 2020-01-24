@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { createTransport, Transporter } from 'nodemailer';
-import { SendMailResult } from './models/send-mail-result.model';
+import { SuccessResponse } from './graphql-generic-responses/success-response.model';
+import { ErrorResponse } from './graphql-generic-responses/error-response.model';
 
 @Injectable()
 export class MailService {
@@ -22,11 +23,9 @@ export class MailService {
     subject: string,
     body?: string,
     htmlBody?: string,
-  ): Promise<SendMailResult> {
-    const result = new SendMailResult();
-
+  ): Promise<SuccessResponse | ErrorResponse> {
     try {
-      const msgResult = await this.transporter.sendMail({
+      await this.transporter.sendMail({
         from: process.env.SMTP_FROM,
         to: mailTo,
         subject,
@@ -34,13 +33,10 @@ export class MailService {
         html: htmlBody,
       });
 
-      result.success = true;
-      result.message = msgResult;
+      return new SuccessResponse('Email has been sent.');
     } catch (error) {
-      result.success = false;
-      result.message = error;
+      // TODO logger
+      return new ErrorResponse('Something went wrong while sending email.');
     }
-
-    return result;
   }
 }
