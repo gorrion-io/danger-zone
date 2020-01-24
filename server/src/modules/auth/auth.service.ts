@@ -55,7 +55,7 @@ export class AuthService {
       );
     }
 
-    if (!verifyPassword(user.password, dto.password)) {
+    if (!(await verifyPassword(user.password, dto.password))) {
       throw new Error(`Wrong email or password.`);
     }
 
