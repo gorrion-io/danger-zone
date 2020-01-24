@@ -109,16 +109,11 @@ export class AuthService {
   async getMagicLink(
     magicLinkParam: MagicLinkInput,
   ): Promise<string | ErrorResponse> {
-    const user = await this.userModel.findById(magicLinkParam._id);
-    if (!user) {
-      return new ErrorResponse(
-        `User with id: "${magicLinkParam._id}" not found.`,
-      );
-    }
+    const user = await this.userModel.findOne({ email: magicLinkParam.email });
 
-    if (!user.password) {
+    if (!user || !user.password) {
       return new ErrorResponse(
-        `User with id: "${magicLinkParam._id}" is not registered.`,
+        `User with email: "${magicLinkParam.email}" is not registered.`,
       );
     }
 

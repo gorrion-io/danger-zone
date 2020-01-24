@@ -47,7 +47,6 @@ input LoginUserInput {
 union MagicLink = SuccessResponse | ErrorResponse
 
 input MagicLinkInput {
-  _id: ObjectId!
   email: String!
 }
 
