@@ -9,6 +9,7 @@ import { MagicLinkInput } from './models/magic-link.input';
 import { LoginUserInput } from './models/login-user.input';
 import { MagicLinkUnion } from './unions/magic-link.union';
 import { ErrorResponse } from '../common/graphql-generic-responses/error-response.model';
+import { TokenUnion } from './unions/token.union';
 
 @Resolver(() => Token)
 export class AuthResolver {
@@ -20,17 +21,15 @@ export class AuthResolver {
   @Mutation(() => Token)
   async register(
     @Args('registerUserParam') param: RegisterUserInput,
-  ): Promise<Token> {
-    const user = await this.authService.registerUser(param);
-
-    return this.authService.generateToken(user);
+  ): Promise<Token | ErrorResponse> {
+    return this.authService.registerUser(param);
   }
 
-  @Mutation(() => Token)
-  async login(@Args('loginUserParam') param: LoginUserInput): Promise<Token> {
-    const user = await this.authService.login(param);
-
-    return this.authService.generateToken(user);
+  @Mutation(() => TokenUnion)
+  async login(
+    @Args('loginUserParam') param: LoginUserInput,
+  ): Promise<Token | ErrorResponse> {
+    return this.authService.login(param);
   }
 
   @Mutation(() => MagicLinkUnion)

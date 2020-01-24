@@ -11,6 +11,7 @@ import { MagicLinkInput } from './models/magic-link.input';
 import { v4 as uuid } from 'uuid';
 import { LoginUserInput } from './models/login-user.input';
 import { verifyPassword } from '../../utils/verify-password';
+import { ErrorResponse } from '../common/graphql-generic-responses/error-response.model';
 
 @Injectable()
 export class AuthService {
@@ -19,47 +20,51 @@ export class AuthService {
     private readonly userModel: ReturnModelType<typeof User>,
   ) {}
 
-  async registerUser(dto: RegisterUserInput): Promise<User> {
+  async registerUser(dto: RegisterUserInput): Promise<Token | ErrorResponse> {
     const userByEmail = await this.userModel.findOne({ email: dto.email });
 
     if (userByEmail && dto._id.equals(userByEmail._id)) {
-      throw new Error(`Your accoount is already registered.`);
+      return new ErrorResponse(`Your accoount is already registered.`);
     }
 
     if (userByEmail) {
-      throw new Error(
+      return new ErrorResponse(
         `User with email address: "${dto.email}" already exists.`,
       );
     }
 
     const user = await this.userModel.findById(dto._id);
     if (!user) {
-      throw new Error(`User with id: "${dto._id}" not found.`);
+      return new ErrorResponse(`User with id: "${dto._id}" not found.`);
     }
 
     dto.password = await hashPassword(dto.password);
     Object.assign(user, dto);
 
-    return user.save();
+    user.save();
+
+    return this.generateToken(user);
   }
 
-  async login(dto: LoginUserInput): Promise<User> {
+  async login(dto: LoginUserInput): Promise<Token | ErrorResponse> {
     const user = await this.userModel.findOne({ email: dto.email });
     if (!user) {
-      throw new Error(`User with email address: "${dto.email}" not found.`);
+      return new ErrorResponse(
+        `User with email address: "${dto.email}" not found.`,
+      );
     }
 
     if (!user.password) {
-      throw new Error(
+      return new ErrorResponse(
         `User with email address: "${dto.email}" is not registered.`,
       );
     }
 
     if (!(await verifyPassword(user.password, dto.password))) {
-      throw new Error(`Wrong email or password.`);
+      return new ErrorResponse(`Wrong email or password.`);
     }
 
-    return user;
+    return this.generateToken(user);
   }
 
   async getMagicLink(magicLinkParam: MagicLinkInput): Promise<string> {

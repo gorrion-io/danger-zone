@@ -47,7 +47,7 @@ type Mutation {
   editUser(user: EditUserInput!): User!
   deleteUser(userId: ObjectId!): ObjectId!
   register(registerUserParam: RegisterUserInput!): Token!
-  login(loginUserParam: LoginUserInput!): Token!
+  login(loginUserParam: LoginUserInput!): TokenUnion!
   sendMagicLink(magicLinkParam: MagicLinkInput!): MagicLink!
   addReport(report: AddReportInput!): Report!
   editReport(report: EditReportInput!): Report!
@@ -82,6 +82,8 @@ type SuccessResponse {
 type Token {
   token: String!
 }
+
+union TokenUnion = Token | ErrorResponse
 
 type User {
   _id: ObjectId!
