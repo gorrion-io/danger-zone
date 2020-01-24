@@ -10,19 +10,27 @@ import { LoginUserInput } from './models/login-user.input';
 import { MagicLinkUnion } from './unions/magic-link.union';
 import { ErrorResponse } from '../common/graphql-generic-responses/error-response.model';
 import { TokenUnion } from './unions/token.union';
+import { GetTokenInput } from './models/get-token.input';
 
-@Resolver(() => Token)
+@Resolver()
 export class AuthResolver {
   constructor(
     @Inject(AuthService) private readonly authService: AuthService,
     @Inject(MailService) private readonly mailService: MailService,
   ) {}
 
-  @Mutation(() => Token)
+  @Mutation(() => TokenUnion)
   async register(
     @Args('registerUserParam') param: RegisterUserInput,
   ): Promise<Token | ErrorResponse> {
     return this.authService.registerUser(param);
+  }
+
+  @Mutation(() => TokenUnion)
+  async token(
+    @Args('getToken') getTokenInput: GetTokenInput,
+  ): Promise<Token | ErrorResponse> {
+    return this.authService.getToken(getTokenInput);
   }
 
   @Mutation(() => TokenUnion)
@@ -43,7 +51,13 @@ export class AuthResolver {
   async sendMagicLink(
     @Args('magicLinkParam') magicLinkParam: MagicLinkInput,
   ): Promise<SuccessResponse | ErrorResponse> {
-    const magicLink = await this.authService.getMagicLink(magicLinkParam);
+    const magicLinkResponse = await this.authService.getMagicLink(
+      magicLinkParam,
+    );
+
+    if (magicLinkResponse instanceof ErrorResponse) {
+      return magicLinkResponse as ErrorResponse;
+    }
 
     const subject = 'Danger zone';
     const htmlBody = `
@@ -51,7 +65,7 @@ export class AuthResolver {
       <header>
       </header>
       <body>
-        <h3> Link: ${magicLink}</h3>
+        <h3> Link: ${magicLinkResponse}</h3>
       </body>
     </html>
     `;

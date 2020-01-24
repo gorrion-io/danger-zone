@@ -6,7 +6,6 @@
 input AddReportInput {
   title: String!
   description: String!
-  reportedBy: ObjectId!
 }
 
 input AddUserInput {
@@ -17,7 +16,6 @@ input EditReportInput {
   _id: ObjectId!
   title: String
   description: String
-  reportedBy: ObjectId!
 }
 
 input EditUserInput {
@@ -28,6 +26,17 @@ input EditUserInput {
 
 type ErrorResponse {
   message: String!
+}
+
+input GetTokenInput {
+  grantType: GrantType!
+  userName: String
+  refreshToken: String
+}
+
+enum GrantType {
+  AccessToken
+  RefreshToken
 }
 
 input LoginUserInput {
@@ -43,10 +52,11 @@ input MagicLinkInput {
 }
 
 type Mutation {
-  addUser(user: AddUserInput!): Token!
+  addUser(user: AddUserInput!): User!
   editUser(user: EditUserInput!): User!
   deleteUser(userId: ObjectId!): ObjectId!
-  register(registerUserParam: RegisterUserInput!): Token!
+  register(registerUserParam: RegisterUserInput!): TokenUnion!
+  token(getToken: GetTokenInput!): TokenUnion!
   login(loginUserParam: LoginUserInput!): TokenUnion!
   loginByMagicLink(magicLinkId: String!): TokenUnion!
   sendMagicLink(magicLinkParam: MagicLinkInput!): MagicLink!
@@ -82,6 +92,7 @@ type SuccessResponse {
 
 type Token {
   token: String!
+  refreshToken: String!
 }
 
 union TokenUnion = Token | ErrorResponse

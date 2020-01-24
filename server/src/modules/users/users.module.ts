@@ -16,5 +16,6 @@ const resolvers = [UsersResolver];
     AuthModule,
   ],
   providers: [...services, ...resolvers],
+  exports: [UsersService],
 })
 export class UsersModule {}
