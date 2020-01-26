@@ -4,6 +4,7 @@ import { SET_NAME, SET_PASSWORD, SET_USERNAME, SET_SURNAME, MED_BREAKPOINT } fro
 import { Icon, Button, Typography } from 'antd';
 import styled from 'styled-components';
 import { FormControl } from '../shared/form-control.component';
+import { FormWrapper } from '../shared/form-wrapper.component';
 
 const initialState = {
   username: '',
@@ -12,15 +13,8 @@ const initialState = {
   surname: '',
 };
 
-const FormWrapper = styled.div`
-  display: flex;
-  flex-flow: column nowrap;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  padding: 2% 0;
-
-  @media (min-width: ${MED_BREAKPOINT}px) {
+const RegistrationFormWrapper = styled(FormWrapper)`
+  @media (min-width: ${MED_BREAKPOINT}) {
     padding: 2% 10%;
     height: 100%;
     width: 60%;
@@ -33,7 +27,7 @@ export const RegistrationForm = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   return (
-    <FormWrapper>
+    <RegistrationFormWrapper>
       <Title level={2} style={{ textAlign: 'center', marginTop: '.5em' }}>
         No account yet?
         <br />
@@ -74,10 +68,10 @@ export const RegistrationForm = () => {
         inputValue={state.surname}
         inputOnChange={(e) => dispatch({ type: SET_SURNAME, payload: e.target.value })}
       />
-
-      <Button type='primary' onClick={() => alert('registration')}>
+      {/* onClick currently has a placeholder, should be used to send data for registration */}
+      <Button type='primary' onClick={() => alert('register')}>
         Create an account
       </Button>
-    </FormWrapper>
+    </RegistrationFormWrapper>
   );
 };

@@ -10,7 +10,7 @@ const Wrapper = styled.div`
   align-items: center;
   width: 100%;
 
-  @media (min-width: ${MED_BREAKPOINT}px) {
+  @media (min-width: ${MED_BREAKPOINT}) {
     flex-flow: row nowrap;
     align-items: flex-start;
   }

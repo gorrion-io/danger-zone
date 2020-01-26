@@ -6,21 +6,15 @@ import styled from 'styled-components';
 import { MED_BREAKPOINT, SET_USERNAME, SET_PASSWORD } from '../../constants';
 import { formReducer as reducer } from '../../reducers';
 import { FormControl } from '../shared/form-control.component';
+import { FormWrapper } from '../shared/form-wrapper.component';
 
 const initialState = {
   username: '',
   password: '',
 };
 
-const FormWrapper = styled.div`
-  display: flex;
-  flex-flow: column nowrap;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  padding: 2% 0;
-
-  @media (min-width: ${MED_BREAKPOINT}px) {
+const LoginFormWrapper = styled(FormWrapper)`
+  @media (min-width: ${MED_BREAKPOINT}) {
     padding: 2% 5%;
     height: 100%;
     width: 40%;
@@ -34,7 +28,7 @@ export const LoginForm = () => {
   const [login] = useMutation(LOGIN);
 
   return (
-    <FormWrapper>
+    <LoginFormWrapper>
       <Title level={2} style={{ textAlign: 'center', marginTop: '.5em' }}>
         Login
       </Title>
@@ -66,6 +60,6 @@ export const LoginForm = () => {
         }}>
         Login
       </Button>
-    </FormWrapper>
+    </LoginFormWrapper>
   );
 };

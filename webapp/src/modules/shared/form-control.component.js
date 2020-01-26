@@ -14,6 +14,7 @@ const Wrapper = styled.div`
 export const FormControl = ({ labelText, inputId, inputType, inputValue, inputOnChange, inputPlaceholder, inputPrefix }) => (
   <Wrapper>
     <label htmlFor={inputId}>{labelText}</label>
+
     <Input
       onChange={(e) => inputOnChange(e)}
       value={inputValue}
