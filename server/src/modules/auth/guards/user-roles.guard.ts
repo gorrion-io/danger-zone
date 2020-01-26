@@ -13,7 +13,6 @@ export class RolesGuard implements CanActivate {
     }
     const ctx = context.getArgByIndex(2);
     const user = ctx.user;
-    // const hasRole = () => user.role === role;
 
     if (user && user.role && this.checkRoles(user.role, role)) {
       return true;
