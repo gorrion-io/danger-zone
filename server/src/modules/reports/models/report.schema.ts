@@ -1,10 +1,17 @@
-import { buildSchema, prop as Property } from '@typegoose/typegoose';
+import {
+  buildSchema,
+  pre as Pre,
+  prop as Property,
+} from '@typegoose/typegoose';
 import { ObjectId } from 'bson';
 import { Schema } from 'mongoose';
 import { Field, ObjectType } from 'type-graphql';
 import { ObjectIdScalar } from '../../common/graphql-scalars/object-id.scalar';
 import { User } from '../../users/models/user.schema';
 
+@Pre<Report>(['find', 'findOne'], function() {
+  this.where({ isDeleted: false });
+})
 @ObjectType()
 export class Report {
   @Field(() => ObjectIdScalar)
