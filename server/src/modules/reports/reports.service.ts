@@ -39,4 +39,16 @@ export class ReportsService {
 
     return report.save();
   }
+
+  async delete(id: ObjectIdScalar): Promise<ObjectIdScalar> {
+    const report = await this.reportModel.findById(id);
+    if (!report) {
+      throw new Error(`Report with id: "${id}" not found.`);
+    }
+
+    report.isDeleted = true;
+    report.save();
+
+    return report.id;
+  }
 }
