@@ -6,6 +6,8 @@
 input AddReportInput {
   title: String!
   description: String!
+  latitude: Float!
+  longitude: Float!
 }
 
 input AddUserInput {
@@ -16,6 +18,8 @@ input EditReportInput {
   _id: ObjectId!
   title: String
   description: String
+  latitude: Float
+  longitude: Float
 }
 
 input EditUserInput {
@@ -47,6 +51,9 @@ type Report {
   title: String!
   description: String!
   reportedBy: ObjectId!
+  isDeleted: Boolean!
+  latitude: Float!
+  longitude: Float!
 }
 
 input SignInInput {

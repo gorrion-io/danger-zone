@@ -12,4 +12,10 @@ export class EditReportInput {
 
   @Field({ nullable: true })
   description?: string;
+
+  @Field({ nullable: true })
+  latitude?: number;
+
+  @Field({ nullable: true })
+  longitude?: number;
 }

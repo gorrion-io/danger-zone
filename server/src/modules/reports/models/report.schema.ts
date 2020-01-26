@@ -7,20 +7,32 @@ import { User } from '../../users/models/user.schema';
 
 @ObjectType()
 export class Report {
-    @Field(() => ObjectIdScalar)
-    readonly _id: ObjectId;
+  @Field(() => ObjectIdScalar)
+  readonly _id: ObjectId;
 
-    @Field()
-    @Property({ required: true, maxlength: 50 })
-    title: string;
+  @Field()
+  @Property({ required: true, maxlength: 50 })
+  title: string;
 
-    @Field()
-    @Property({ required: true, maxlength: 250 })
-    description: string;
+  @Field()
+  @Property({ required: true, maxlength: 250 })
+  description: string;
 
-    @Field(() => ObjectIdScalar)
-    @Property({ ref: User })
-    reportedBy: ObjectId;
+  @Field(() => ObjectIdScalar)
+  @Property({ ref: User })
+  reportedBy: ObjectId;
+
+  @Field()
+  @Property({ required: true, default: false })
+  isDeleted: boolean;
+
+  @Field()
+  @Property({ required: true })
+  latitude: number;
+
+  @Field()
+  @Property({ required: true })
+  longitude: number;
 }
 
 export const ReportSchema: Schema<typeof Report> = buildSchema(Report);
