@@ -3,11 +3,11 @@ import { GrantType } from './grant-type.enum';
 
 @InputType()
 export class SignInInput {
-  @Field()
+  @Field(type => GrantType)
   grantType: GrantType;
 
   @Field({ nullable: true })
-  userName?: string;
+  userName?: string; // Maybe userId instead?
 
   @Field({ nullable: true })
   refreshToken?: string;

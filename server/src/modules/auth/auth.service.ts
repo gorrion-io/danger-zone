@@ -32,6 +32,7 @@ export class AuthService {
     const tokenPayload: ICurrentUser = {
       _id: user._id,
       userName: user.userName,
+      role: user.role,
     };
 
     const tokenResponse = new TokenModel();
