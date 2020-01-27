@@ -25,6 +25,7 @@ export class ReportsService {
   async add(dto: AddReportInput, user: ICurrentUser): Promise<Report> {
     const report = new this.reportModel();
     Object.assign(report, dto);
+    report.creationDate = new Date();
     report.reportedBy = user._id;
 
     return report.save();

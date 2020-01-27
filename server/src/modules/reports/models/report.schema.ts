@@ -9,6 +9,9 @@ import { Field, ObjectType } from 'type-graphql';
 import { ObjectIdScalar } from '../../common/graphql-scalars/object-id.scalar';
 import { User } from '../../users/models/user.schema';
 
+@Pre<Report>('save', function() {
+  this.lastEditDate = new Date();
+})
 @Pre<Report>(['find', 'findOne'], function() {
   this.where({ isDeleted: false });
 })
@@ -16,6 +19,14 @@ import { User } from '../../users/models/user.schema';
 export class Report {
   @Field(() => ObjectIdScalar)
   readonly _id: ObjectId;
+
+  @Field()
+  @Property({ required: true })
+  creationDate: Date;
+
+  @Field()
+  @Property({ required: true })
+  lastEditDate: Date;
 
   @Field()
   @Property({ required: true, maxlength: 50 })
