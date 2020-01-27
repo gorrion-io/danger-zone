@@ -125,7 +125,7 @@ export class AuthService {
 
     user.save();
 
-    return `${process.env.BASE_URL}/link?id=${linkId}`;
+    return `${process.env.BASE_URL}/link/${linkId}`;
   }
 
   async getToken(getTokenInput: GetTokenInput): Promise<Token | ErrorResponse> {
