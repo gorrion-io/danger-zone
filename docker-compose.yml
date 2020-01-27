@@ -23,6 +23,7 @@ services:
       PORT: 3000
       CHOKIDAR_USEPOLLING: 1
       CHOKIDAR_POLLINTERVAL: 3000
+      REACT_APP_API_KEY: ${REACT_APP_API_KEY}
 
   mongo:
     image: mongo
