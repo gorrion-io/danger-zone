@@ -1,21 +1,38 @@
 import React, { useState } from 'react';
 import { Input, Icon, Button } from 'antd';
 import { ADD_USER } from './add-user-form.mutations';
+import { TOKEN } from '../loginForm/login-form.mutations';
 import { useMutation } from '@apollo/react-hooks';
-import { USER_ID, USER_NAME } from '../../utils/constants/local-storage.const';
+import { openErrorNotification } from '../../utils/notifications';
+import { ERROR_RESPONSE } from '../../utils/constants/respons-types.const';
+import { saveUserToLocalStorage, saveTokenToLocalStorage } from '../../utils/helpers/local-storage.helper';
 
 export const AddUserForm = () => {
   const [username, setUsername] = useState('');
   const [addUser] = useMutation(ADD_USER);
+  const [getToken] = useMutation(TOKEN);
 
-  // const setAuthToken = (token) => {
-  //   localStorage.setItem(AUTH_TOKEN, token.token);
-  //   localStorage.setItem(REFRESH_TOKEN, token.refreshToken);
-  // }
+  const onCreateAccount = async () => {
+    const userRes = await addUser({ variables: { userName: username } });
 
-  const saveUser = (user) => {
-    localStorage.setItem(USER_ID, user._id);
-    localStorage.setItem(USER_NAME, user.userName);
+    if (userRes.data.addUser.__typename === ERROR_RESPONSE) {
+      openErrorNotification(userRes.data.addUser.message);
+      return;
+    }
+
+    const user = userRes.data.addUser;
+    const userNameId = `${user.userName}-${user._id}`;
+    const tokenData = await getToken({ variables: { userName: userNameId } });
+
+    if (tokenData.data.token.__typename === ERROR_RESPONSE) {
+      openErrorNotification(tokenData.data.token.message);
+      return;
+    }
+
+    saveTokenToLocalStorage(tokenData.data.token);
+    saveUserToLocalStorage(user);
+
+    setUsername('');
   };
 
   return (
@@ -26,13 +43,7 @@ export const AddUserForm = () => {
         prefix={<Icon type='user' style={{ color: 'rgba(0,0,0,.25)' }} />}
         placeholder='Username'
       />
-      <Button
-        onClick={async () => {
-          const { data } = await addUser({ variables: { userName: username } });
-          saveUser(data.addUser);
-        }}>
-        Create an account
-      </Button>
+      <Button onClick={onCreateAccount}>Create an account</Button>
     </div>
   );
 };
