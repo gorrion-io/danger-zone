@@ -25,6 +25,7 @@ export class ReportsService {
   async add(dto: AddReportInput, user: ICurrentUser): Promise<Report> {
     const report = new this.reportModel();
     Object.assign(report, dto);
+    report.creationDate = new Date();
     report.reportedBy = user._id;
 
     return report.save();
@@ -38,5 +39,17 @@ export class ReportsService {
     Object.assign(report, dto);
 
     return report.save();
+  }
+
+  async delete(id: ObjectIdScalar): Promise<ObjectIdScalar> {
+    const report = await this.reportModel.findById(id);
+    if (!report) {
+      throw new Error(`Report with id: "${id}" not found.`);
+    }
+
+    report.isDeleted = true;
+    report.save();
+
+    return report.id;
   }
 }

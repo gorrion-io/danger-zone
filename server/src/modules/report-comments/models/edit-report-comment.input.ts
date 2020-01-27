@@ -3,19 +3,10 @@ import { Field, InputType } from 'type-graphql';
 import { ObjectIdScalar } from '../../common/graphql-scalars/object-id.scalar';
 
 @InputType()
-export class EditReportInput {
+export class EditReportCommentInput {
   @Field(() => ObjectIdScalar)
   readonly _id: ObjectId;
 
-  @Field({ nullable: true })
-  title?: string;
-
-  @Field({ nullable: true })
-  description?: string;
-
-  @Field({ nullable: true })
-  latitude?: number;
-
-  @Field({ nullable: true })
-  longitude?: number;
+  @Field()
+  message: string;
 }

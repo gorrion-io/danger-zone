@@ -6,16 +6,25 @@
 input AddReportInput {
   title: String!
   description: String!
+  latitude: Float!
+  longitude: Float!
 }
 
 input AddUserInput {
   userName: String!
 }
 
+"""
+The javascript `Date` as string. Type represents date and time as the ISO Date string.
+"""
+scalar DateTime
+
 input EditReportInput {
   _id: ObjectId!
   title: String
   description: String
+  latitude: Float
+  longitude: Float
 }
 
 input EditUserInput {
@@ -44,9 +53,14 @@ type Query {
 
 type Report {
   _id: ObjectId!
+  creationDate: DateTime!
+  lastEditDate: DateTime!
   title: String!
   description: String!
   reportedBy: ObjectId!
+  isDeleted: Boolean!
+  latitude: Float!
+  longitude: Float!
 }
 
 input SignInInput {
