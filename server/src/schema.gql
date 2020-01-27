@@ -14,6 +14,11 @@ input AddUserInput {
   userName: String!
 }
 
+"""
+The javascript `Date` as string. Type represents date and time as the ISO Date string.
+"""
+scalar DateTime
+
 input EditReportInput {
   _id: ObjectId!
   title: String
@@ -48,6 +53,8 @@ type Query {
 
 type Report {
   _id: ObjectId!
+  creationDate: DateTime!
+  lastEditDate: DateTime!
   title: String!
   description: String!
   reportedBy: ObjectId!
