@@ -7,12 +7,11 @@ import { EditReportInput } from './models/edit-report.input';
 import { Report } from './models/report.schema';
 import { ReportsService } from './reports.service';
 import { ICurrentUser } from '../auth/interfaces/current-user.interface';
-import { RolesGuard } from '../auth/guards/user-roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { Role } from '../users/models/user-role.enum';
 
 @Resolver(() => Report)
-@UseGuards(AuthGuard, RolesGuard)
+@UseGuards(AuthGuard)
 export class ReportsResolver {
   constructor(
     @Inject(ReportsService) private readonly reportsService: ReportsService,
