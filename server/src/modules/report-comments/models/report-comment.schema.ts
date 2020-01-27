@@ -13,6 +13,9 @@ import { User } from '../../users/models/user.schema';
 @Pre<ReportComment>('save', function() {
   this.lastEditDate = new Date();
 })
+@Pre<ReportComment>(['find', 'findOne'], function() {
+  this.where({ isDeleted: false });
+})
 @ObjectType()
 export class ReportComment {
   @Field(() => ObjectIdScalar)

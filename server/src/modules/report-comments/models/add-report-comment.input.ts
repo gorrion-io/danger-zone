@@ -3,7 +3,7 @@ import { Field, InputType } from 'type-graphql';
 import { ObjectIdScalar } from '../../common/graphql-scalars/object-id.scalar';
 
 @InputType()
-export class AddReportInput {
+export class AddReportCommentInput {
   @Field()
   message: string;
 
