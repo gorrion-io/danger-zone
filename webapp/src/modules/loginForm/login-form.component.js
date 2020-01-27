@@ -3,8 +3,9 @@ import { Input, Icon, Button } from 'antd';
 import { LOGIN, SEND_MAGIC_LINK } from './login-form.mutations';
 import { useMutation } from '@apollo/react-hooks';
 import { ERROR_RESPONSE } from '../../utils/constants/respons-types.const';
-import { saveTokenToLocalStorage } from '../../utils/helpers/local-storage.helper';
+import { saveTokenToLocalStorage, saveUserToLocalStorage } from '../../utils/helpers/local-storage.helper';
 import { openInfoNotification, openErrorNotification } from '../../utils/notifications';
+import jwt from 'jwt-decode';
 
 export const LoginForm = () => {
   const [credentials, setCredentials] = useState({});
@@ -17,15 +18,14 @@ export const LoginForm = () => {
     }
 
     const { data } = await login({
-      variables: {
-        email: credentials.email,
-        password: credentials.password,
-      },
+      variables: credentials,
     });
 
     if (data.login.__typename === ERROR_RESPONSE) {
       openErrorNotification(data.login.message);
     } else {
+      const user = jwt(data.login.token);
+      saveUserToLocalStorage(user);
       saveTokenToLocalStorage(data.login);
     }
 
