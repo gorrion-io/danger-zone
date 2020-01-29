@@ -6,7 +6,7 @@ import { Token } from './models/token.model';
 import { RegisterUserInput } from './models/register-user.input';
 import { hashPassword } from '../../utils/hash-password';
 import { MagicLinkInput } from './models/magic-link.input';
-import { v4 as uuid } from 'uuid';
+import { uuidv4 as uuid } from '../../utils/uuid';
 import { LoginUserInput } from './models/login-user.input';
 import { verifyPassword } from '../../utils/verify-password';
 import { ErrorResponse } from '../common/graphql-generic-responses/error-response.model';
