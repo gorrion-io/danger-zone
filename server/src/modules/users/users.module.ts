@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { CommonModule } from '../common/common.module';
 import { User, UserSchema } from './models/user.schema';
@@ -13,7 +13,7 @@ const resolvers = [UsersResolver];
   imports: [
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
     CommonModule,
-    AuthModule,
+    forwardRef(() => AuthModule),
   ],
   providers: [...services, ...resolvers],
   exports: [UsersService],

@@ -1,11 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { ObjectId } from 'bson';
 import * as jwt from 'jsonwebtoken';
 import { User } from '../users/models/user.schema';
 import { ICurrentUser } from './interfaces/current-user.interface';
 import { Token } from './models/token.model';
-import { InjectModel } from '@nestjs/mongoose';
-import { ReturnModelType } from '@typegoose/typegoose';
 import { RegisterUserInput } from './models/register-user.input';
 import { hashPassword } from '../../utils/hash-password';
 import { MagicLinkInput } from './models/magic-link.input';
@@ -15,16 +12,14 @@ import { verifyPassword } from '../../utils/verify-password';
 import { ErrorResponse } from '../common/graphql-generic-responses/error-response.model';
 import { GrantType } from './models/grant-type.enum';
 import { GetTokenInput } from './models/get-token.input';
+import { UsersService } from '../users/users.service';
 
 @Injectable()
 export class AuthService {
-  constructor(
-    @InjectModel(User.name)
-    private readonly userModel: ReturnModelType<typeof User>,
-  ) {}
+  constructor(private readonly usersService: UsersService) {}
 
   async registerUser(dto: RegisterUserInput): Promise<Token | ErrorResponse> {
-    const userByEmail = await this.userModel.findOne({ email: dto.email });
+    const userByEmail = await this.usersService.findOne({ email: dto.email });
 
     if (userByEmail && dto._id.equals(userByEmail._id)) {
       return new ErrorResponse(`Your accoount is already registered.`);
@@ -36,7 +31,7 @@ export class AuthService {
       );
     }
 
-    const user = await this.userModel.findById(dto._id);
+    const user = await this.usersService.findById(dto._id);
     if (!user) {
       return new ErrorResponse(`User with id: "${dto._id}" not found.`);
     }
@@ -44,7 +39,7 @@ export class AuthService {
     dto.password = await hashPassword(dto.password);
     Object.assign(user, dto);
 
-    user.save();
+    await this.usersService.edit(user);
 
     const getTokenInput: GetTokenInput = {
       grantType: GrantType.AccessToken,
@@ -55,7 +50,7 @@ export class AuthService {
   }
 
   async login(dto: LoginUserInput): Promise<Token | ErrorResponse> {
-    const user = await this.userModel.findOne({ email: dto.email });
+    const user = await this.usersService.findOne({ email: dto.email });
     if (!user) {
       return new ErrorResponse(
         `User with email address: "${dto.email}" not found.`,
@@ -81,7 +76,7 @@ export class AuthService {
   }
 
   async loginByMagicLink(id: string): Promise<Token | ErrorResponse> {
-    const user = await this.userModel.findOne({ magicLinkId: id });
+    const user = await this.usersService.findOne({ magicLinkId: id });
     if (!user) {
       return new ErrorResponse(`User for specified link does not exist.`);
     }
@@ -109,7 +104,9 @@ export class AuthService {
   async getMagicLink(
     magicLinkParam: MagicLinkInput,
   ): Promise<string | ErrorResponse> {
-    const user = await this.userModel.findOne({ email: magicLinkParam.email });
+    const user = await this.usersService.findOne({
+      email: magicLinkParam.email,
+    });
 
     if (!user || !user.password) {
       return new ErrorResponse(
@@ -123,7 +120,7 @@ export class AuthService {
     user.magicLinkId = linkId;
     user.magicLinkCreatedAt = new Date();
 
-    user.save();
+    await this.usersService.edit(user);
 
     return `${process.env.BASE_URL}/link/${linkId}`;
   }
@@ -132,7 +129,7 @@ export class AuthService {
     switch (getTokenInput.grantType) {
       case GrantType.AccessToken:
         const id = getTokenInput.userName.split('-').pop();
-        const user = await this.userModel.findById(id);
+        const user = await this.usersService.findById(id);
 
         return this.generateToken(user);
 
@@ -150,7 +147,7 @@ export class AuthService {
       return new ErrorResponse('Invalid token.');
     }
 
-    const user = await this.userModel.findById(userToken._id);
+    const user = await this.usersService.findById(userToken._id);
     if (!user) {
       return new ErrorResponse('User has no access.');
     }

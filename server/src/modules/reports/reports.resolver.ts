@@ -21,7 +21,7 @@ export class ReportsResolver {
 
   @Query(() => Report)
   async findReport(@Args('id') id: ObjectIdScalar): Promise<Report> {
-    return this.reportsService.findOne(id);
+    return this.reportsService.findById(id);
   }
 
   @Mutation(() => Report)
