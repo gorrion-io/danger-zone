@@ -19,21 +19,26 @@ export class AuthService {
   constructor(private readonly usersService: UsersService) {}
 
   async registerUser(dto: RegisterUserInput): Promise<Token | ErrorResponse> {
-    const userByEmail = await this.usersService.findOne({ email: dto.email });
-
-    if (userByEmail && dto._id.equals(userByEmail._id)) {
-      return new ErrorResponse(`Your accoount is already registered.`);
+    const user = await this.usersService.findById(dto._id);
+    if (!user) {
+      return new ErrorResponse(`User with id: "${dto._id}" not found.`);
     }
 
-    if (userByEmail) {
+    const userByEmail = await this.usersService.findOne({ email: dto.email });
+    if (userByEmail && !userByEmail._id.equals(dto._id)) {
       return new ErrorResponse(
         `User with email address: "${dto.email}" already exists.`,
       );
     }
 
-    const user = await this.usersService.findById(dto._id);
-    if (!user) {
-      return new ErrorResponse(`User with id: "${dto._id}" not found.`);
+    if (user.password) {
+      if (user.email === dto.email) {
+        return new ErrorResponse(`Your account is already registered.`);
+      } else if (user.email) {
+        return new ErrorResponse(
+          `Your account is already registered with different email address.`,
+        );
+      }
     }
 
     dto.password = await hashPassword(dto.password);
