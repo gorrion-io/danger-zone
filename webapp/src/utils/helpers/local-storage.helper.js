@@ -16,3 +16,10 @@ export function getUserFromLocalStorage() {
     userName: localStorage.getItem(USER_NAME),
   };
 }
+
+export function getTokenFromLocalStorage() {
+  return {
+    authToken: localStorage.getItem(AUTH_TOKEN),
+    refreshToken: localStorage.getItem(REFRESH_TOKEN),
+  };
+}

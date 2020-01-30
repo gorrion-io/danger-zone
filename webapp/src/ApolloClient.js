@@ -1,14 +1,20 @@
 import { ApolloClient, ApolloLink, InMemoryCache, HttpLink } from 'apollo-boost';
-import { AUTH_TOKEN } from './utils/constants/local-storage.const';
+import { getTokenFromLocalStorage } from './utils/helpers/local-storage.helper';
 
 const authLink = new ApolloLink((operation, forward) => {
-  const token = localStorage.getItem(AUTH_TOKEN);
+  const token = getTokenFromLocalStorage();
 
-  operation.setContext({
-    headers: {
-      authorization: token ? `Bearer ${token}` : '',
-    },
-  });
+  if (token && token.authToken) {
+    operation.setContext({
+      headers: {
+        authorization: `Bearer ${token.authToken}`,
+      },
+    });
+  } else {
+    operation.setContext({
+      headers: {},
+    });
+  }
 
   return forward(operation);
 });
