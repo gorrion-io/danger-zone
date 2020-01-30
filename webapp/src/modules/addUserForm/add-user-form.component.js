@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { Input, Icon, Button } from 'antd';
+import { Input, Icon, Button, Spin } from 'antd';
 import { ADD_USER } from './add-user-form.mutations';
 import { TOKEN } from '../loginForm/login-form.mutations';
 import { useMutation } from '@apollo/react-hooks';
@@ -9,8 +9,8 @@ import { saveUserToLocalStorage, saveTokenToLocalStorage } from '../../utils/hel
 
 export const AddUserForm = () => {
   const [username, setUsername] = useState('');
-  const [addUser] = useMutation(ADD_USER);
-  const [getToken] = useMutation(TOKEN);
+  const [addUser, { loading: isAddUserLoading }] = useMutation(ADD_USER);
+  const [getToken, { loading: isTokenLoading }] = useMutation(TOKEN);
 
   const onCreateAccount = useCallback(async () => {
     const userRes = await addUser({ variables: { userName: username } });
@@ -38,14 +38,16 @@ export const AddUserForm = () => {
   }, [username]);
 
   return (
-    <div style={{ display: 'flex' }}>
-      <Input
-        onChange={(e) => setUsername(e.target.value)}
-        value={username}
-        prefix={<Icon type='user' style={{ color: 'rgba(0,0,0,.25)' }} />}
-        placeholder='Username'
-      />
-      <Button onClick={onCreateAccount}>Create an account</Button>
-    </div>
+    <Spin spinning={isTokenLoading || isAddUserLoading}>
+      <div style={{ display: 'flex' }}>
+        <Input
+          onChange={(e) => setUsername(e.target.value)}
+          value={username}
+          prefix={<Icon type='user' style={{ color: 'rgba(0,0,0,.25)' }} />}
+          placeholder='Username'
+        />
+        <Button onClick={onCreateAccount}>Create an account</Button>
+      </div>
+    </Spin>
   );
 };

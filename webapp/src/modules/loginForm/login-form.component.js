@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { Input, Icon, Button } from 'antd';
+import { Input, Icon, Button, Spin } from 'antd';
 import { LOGIN, SEND_MAGIC_LINK } from './login-form.mutations';
 import { useMutation } from '@apollo/react-hooks';
 import { ERROR_RESPONSE } from '../../utils/constants/respons-types.const';
@@ -9,8 +9,8 @@ import jwt from 'jwt-decode';
 
 export const LoginForm = () => {
   const [credentials, setCredentials] = useState({});
-  const [login] = useMutation(LOGIN);
-  const [sendMagicLink] = useMutation(SEND_MAGIC_LINK);
+  const [login, { loading: isLoginLoading }] = useMutation(LOGIN);
+  const [sendMagicLink, { loading: isSendMLLoading }] = useMutation(SEND_MAGIC_LINK);
 
   const onLogin = useCallback(async () => {
     if (!credentials.email || !credentials.password) {
@@ -63,7 +63,7 @@ export const LoginForm = () => {
   );
 
   return (
-    <div>
+    <Spin spinning={isLoginLoading || isSendMLLoading}>
       <div style={{ display: 'flex' }}>
         <Input
           onChange={updateField}
@@ -85,6 +85,6 @@ export const LoginForm = () => {
         />
         <Button onClick={onSendMagicLink}>Send access link</Button>
       </div>
-    </div>
+    </Spin>
   );
 };
