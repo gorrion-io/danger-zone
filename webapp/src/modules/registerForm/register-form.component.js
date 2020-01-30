@@ -1,17 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Input, Icon, Button } from 'antd';
 import { REGISTER } from './register-form.mutations';
 import { useMutation } from '@apollo/react-hooks';
 import { ERROR_RESPONSE } from '../../utils/constants/respons-types.const';
-import { openErrorNotification } from '../../utils/notifications';
+import { openErrorNotification, openInfoNotification } from '../../utils/notifications';
 import { saveTokenToLocalStorage, getUserFromLocalStorage } from '../../utils/helpers/local-storage.helper';
+import { Redirect } from 'react-router-dom';
 
 export const RegisterForm = () => {
   const [credentials, setCredentials] = useState({});
+  const [redirect, setRedirect] = useState(false);
   const [register] = useMutation(REGISTER);
 
-  const onRegister = async () => {
+  const onRegister = useCallback(async () => {
     const user = getUserFromLocalStorage();
+
+    if (!user || !user._id || !user.userName) {
+      openErrorNotification('Cannot claim an account. Create an account first.');
+      return;
+    }
+
     const { data } = await register({
       variables: { ...user, ...credentials },
     });
@@ -20,21 +28,30 @@ export const RegisterForm = () => {
       openErrorNotification(data.register.message);
     } else {
       saveTokenToLocalStorage(data.register);
+      openInfoNotification('Your account has been successfully registered!');
+      setRedirect(true);
     }
 
     setCredentials({});
-  };
+  }, [credentials]);
 
-  const validatePassword = () => {
+  const validatePassword = useCallback(() => {
     return credentials.password !== credentials.confirmPassword;
-  };
+  }, [credentials]);
 
-  const updateField = (e) => {
-    setCredentials({
-      ...credentials,
-      [e.target.name]: e.target.value,
-    });
-  };
+  const updateField = useCallback(
+    (e) => {
+      setCredentials({
+        ...credentials,
+        [e.target.name]: e.target.value,
+      });
+    },
+    [credentials],
+  );
+
+  if (redirect) {
+    return <Redirect to='/' />;
+  }
 
   return (
     <div style={{ display: 'flex' }}>

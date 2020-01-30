@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Input, Icon, Button } from 'antd';
 import { ADD_USER } from './add-user-form.mutations';
 import { TOKEN } from '../loginForm/login-form.mutations';
 import { useMutation } from '@apollo/react-hooks';
-import { openErrorNotification } from '../../utils/notifications';
+import { openErrorNotification, openInfoNotification } from '../../utils/notifications';
 import { ERROR_RESPONSE } from '../../utils/constants/respons-types.const';
 import { saveUserToLocalStorage, saveTokenToLocalStorage } from '../../utils/helpers/local-storage.helper';
 
@@ -12,7 +12,7 @@ export const AddUserForm = () => {
   const [addUser] = useMutation(ADD_USER);
   const [getToken] = useMutation(TOKEN);
 
-  const onCreateAccount = async () => {
+  const onCreateAccount = useCallback(async () => {
     const userRes = await addUser({ variables: { userName: username } });
 
     if (userRes.data.addUser.__typename === ERROR_RESPONSE) {
@@ -32,8 +32,10 @@ export const AddUserForm = () => {
     saveTokenToLocalStorage(tokenData.data.token);
     saveUserToLocalStorage(user);
 
+    openInfoNotification('Your account has been created!');
+
     setUsername('');
-  };
+  }, [username]);
 
   return (
     <div style={{ display: 'flex' }}>

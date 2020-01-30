@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Input, Icon, Button } from 'antd';
 import { LOGIN, SEND_MAGIC_LINK } from './login-form.mutations';
 import { useMutation } from '@apollo/react-hooks';
@@ -12,7 +12,7 @@ export const LoginForm = () => {
   const [login] = useMutation(LOGIN);
   const [sendMagicLink] = useMutation(SEND_MAGIC_LINK);
 
-  const onLogin = async () => {
+  const onLogin = useCallback(async () => {
     if (!credentials.email || !credentials.password) {
       return;
     }
@@ -30,9 +30,9 @@ export const LoginForm = () => {
     }
 
     setCredentials({});
-  };
+  }, [credentials]);
 
-  const onSendMagicLink = async () => {
+  const onSendMagicLink = useCallback(async () => {
     if (!credentials.magicLinkEmail) {
       return;
     }
@@ -50,14 +50,17 @@ export const LoginForm = () => {
     }
 
     setCredentials({});
-  };
+  }, [credentials]);
 
-  const updateField = (e) => {
-    setCredentials({
-      ...credentials,
-      [e.target.name]: e.target.value,
-    });
-  };
+  const updateField = useCallback(
+    (e) => {
+      setCredentials({
+        ...credentials,
+        [e.target.name]: e.target.value,
+      });
+    },
+    [credentials],
+  );
 
   return (
     <div>
