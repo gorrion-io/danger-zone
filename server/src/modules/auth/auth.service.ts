@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import * as jwt from 'jsonwebtoken';
 import { User } from '../users/models/user.schema';
 import { ICurrentUser } from './interfaces/current-user.interface';
@@ -16,7 +16,9 @@ import { UsersService } from '../users/users.service';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    @Inject(UsersService) private readonly usersService: UsersService,
+  ) {}
 
   async registerUser(dto: RegisterUserInput): Promise<Token | ErrorResponse> {
     const user = await this.usersService.findById(dto._id);

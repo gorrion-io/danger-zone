@@ -20,7 +20,7 @@ export class SendgridService {
       const handleSGResponse = (err, res) => {
         if (err) {
           resolve(
-            new ErrorResponse(`Something went wrong while sengin email!`),
+            new ErrorResponse(`Something went wrong while sending email!`),
           );
           // TODO logger stuff
         } else {
