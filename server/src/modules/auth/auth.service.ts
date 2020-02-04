@@ -123,7 +123,6 @@ export class AuthService {
 
     const linkId = uuid();
 
-    user.email = magicLinkParam.email;
     user.magicLinkId = linkId;
     user.magicLinkCreatedAt = new Date();
 
