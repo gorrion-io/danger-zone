@@ -32,7 +32,6 @@ export class ReportsService {
   }
 
   async add(dto: AddReportInput, user: ICurrentUser): Promise<Report> {
-    console.log(dto);
     const report = new this.reportModel();
     Object.assign(report, dto);
     report.creationDate = new Date();

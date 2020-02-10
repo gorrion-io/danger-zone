@@ -5,6 +5,8 @@ import { ADD_REPORT } from './add-report-form.mutation';
 import TextArea from 'antd/lib/input/TextArea';
 import { Formik } from 'formik';
 import styled from 'styled-components';
+import { MapContainer } from '../map/map.component';
+import { ErrorBox, ErrorMessage } from '../common/error-display';
 
 const AddButton = styled(Button)`
   && {
@@ -13,22 +15,39 @@ const AddButton = styled(Button)`
   }
 `;
 
-export const AddReportForm = () => {
+const AddReportButtonContainer = styled.div`
+  display: flex;
+  justify-content: flex-end;
+`;
+
+export const AddReportForm = (props) => {
   const [showModal, setShowModal] = useState(false);
   const [addReport] = useMutation(ADD_REPORT);
+  const [marker, setMarker] = useState({});
+  const [error, setError] = useState(false);
+  const handleClick = ({ lngLat: [longitude, latitude] }) => {
+    setMarker({ longitude: longitude, latitude: latitude });
+  };
 
   const submitForm = async (values) => {
-    const aaa = {title: values.title, description: values.description, longitude: 23, latitude: 46 };
-    await addReport({variables: {report : aaa }});
+    try {
+      await addReport({
+        variables: { report: { title: values.title, description: values.description, longitude: marker.longitude, latitude: marker.latitude } },
+      });
+      !error && setError(false);
+    } catch (error) {
+      setError(true);
+    }
   };
   return (
     <>
-      <div style={{ display: 'flex' }}>
-        <Button onClick={() => !showModal && setShowModal(true)}>
+      <AddReportButtonContainer>
+        <Button type='primary' onClick={() => !showModal && setShowModal(true)}>
           <Icon type='plus' /> Add new report
         </Button>
-      </div>
+      </AddReportButtonContainer>
       <Modal visible={showModal} onCancel={() => showModal && setShowModal(false)} title='Add new report' footer={null}>
+        <MapContainer pointer width='100%' markers={[marker]} onClick={(e) => handleClick(e)} />
         <Formik
           initialValues={{
             title: '',
@@ -51,6 +70,11 @@ export const AddReportForm = () => {
                   placeholder='Description'
                   onChange={props.handleChange}></TextArea>
               </Form.Item>
+              {error && (
+                <ErrorBox margin={'16px 0'}>
+                  <ErrorMessage>An error occured</ErrorMessage>
+                </ErrorBox>
+              )}
               <AddButton type='primary' htmlType='submit'>
                 Add
               </AddButton>
