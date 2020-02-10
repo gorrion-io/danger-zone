@@ -6,6 +6,9 @@ export const GET_ALL_REPORTS = gql`
       _id
       title
       description
+      reportedBy {
+        userName
+      }
     }
   }
 `;

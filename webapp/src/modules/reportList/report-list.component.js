@@ -35,7 +35,7 @@ export const ReportList = () => {
     reports && reports.length ? (
       reports.map((report) => {
         return (
-          <Card key={report._id} style={{ margin: 30 }} type='inner' extra='Reported by' title={report.title}>
+          <Card key={report._id} style={{ margin: 30 }} type='inner' extra={`Reported by ${report.reportedBy.userName}`} title={report.title}>
             {report.description}
           </Card>
         );
