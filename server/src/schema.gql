@@ -12,6 +12,7 @@ input AddReportInput {
 
 input AddUserInput {
   userName: String!
+  role: Role
 }
 
 """
@@ -31,6 +32,13 @@ input EditUserInput {
   _id: ObjectId!
   userName: String
   email: String
+  role: Role
+}
+
+"""Available grant types"""
+enum GrantType {
+  AccessToken
+  RefreshToken
 }
 
 type Mutation {
@@ -63,9 +71,16 @@ type Report {
   longitude: Float!
 }
 
+"""Available user roles"""
+enum Role {
+  Admin
+  Maintainer
+  StandardUser
+}
+
 input SignInInput {
-  grantType: String!
-  userName: String
+  grantType: GrantType!
+  userId: ObjectId
   refreshToken: String
 }
 
@@ -79,4 +94,5 @@ type User {
   userName: String!
   email: String
   password: String
+  role: Role!
 }

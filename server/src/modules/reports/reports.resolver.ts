@@ -8,8 +8,11 @@ import { Report } from './models/report.schema';
 import { ReportsService } from './reports.service';
 import { ICurrentUser } from '../auth/interfaces/current-user.interface';
 import { User } from '../users/models/user.schema';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { Role } from '../users/models/user-role.enum';
 
 @Resolver(() => Report)
+@UseGuards(AuthGuard)
 export class ReportsResolver {
   constructor(
     @Inject(ReportsService) private readonly reportsService: ReportsService,
@@ -19,11 +22,13 @@ export class ReportsResolver {
     async reportedBy(@Parent() report: Report): Promise<User> {
       return this.reportsService.resolveUser(report.reportedBy);
   }
+  @Roles(Role.StandardUser)
   @Query(() => [Report])
   async findAllReports(): Promise<Report[]> {
     return this.reportsService.findAll();
   }
 
+  @Roles(Role.StandardUser)
   @Query(() => Report)
   async findReport(@Args('id') id: ObjectIdScalar): Promise<Report> {
     return this.reportsService.findOne(id);
@@ -35,8 +40,6 @@ export class ReportsResolver {
     @Args('report') reportInput: AddReportInput,
     @Context('user') user: ICurrentUser,
   ): Promise<Report> {
-    console.log(123);
-    
     return this.reportsService.add(reportInput, user);
   }
 

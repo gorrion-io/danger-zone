@@ -5,6 +5,7 @@ import { client } from './ApolloClient';
 import { LoginForm } from './modules/loginForm/login-form.component';
 import { ReportList } from './modules/reportList/report-list.component';
 import { AddReportForm } from './modules/addReport/add-report-form.component';
+import { MapContainer } from './modules/map/map.component';
 
 const { Header, Content, Footer } = Layout;
 
@@ -15,6 +16,7 @@ function App() {
         <Header>HEDER</Header>
         <Content>
           <LoginForm />
+          <MapContainer />
           <AddReportForm />
           <ReportList />
         </Content>
