@@ -48,6 +48,7 @@ type Mutation {
   token(signIn: SignInInput!): TokenModel!
   addReport(report: AddReportInput!): Report!
   editReport(report: EditReportInput!): Report!
+  deleteReport(id: ObjectId!): ObjectId!
 }
 
 """Mongo object id scalar type"""
