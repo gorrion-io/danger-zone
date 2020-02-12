@@ -9,7 +9,4 @@ export class RegisterUserInput {
 
   @Field()
   email: string;
-
-  @Field()
-  password: string;
 }

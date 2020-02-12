@@ -4,26 +4,34 @@ import { User } from '../users/models/user.schema';
 import { ICurrentUser } from './interfaces/current-user.interface';
 import { Token } from './models/token.model';
 import { RegisterUserInput } from './models/register-user.input';
-import { hashPassword } from '../../utils/hash-password';
 import { MagicLinkInput } from './models/magic-link.input';
 import { uuidv4 as uuid } from '../../utils/uuid';
-import { LoginUserInput } from './models/login-user.input';
-import { verifyPassword } from '../../utils/verify-password';
 import { ErrorResponse } from '../common/graphql-generic-responses/error-response.model';
 import { GrantType } from './models/grant-type.enum';
 import { GetTokenInput } from './models/get-token.input';
 import { UsersService } from '../users/users.service';
+import { SendgridMessage } from '../sendgrid/models/sendgrid-message.model';
+import { HtmlEmailHelper } from '../sendgrid/helpers/html-email.helper';
+import { SendgridService } from '../sendgrid/sendgrid.service';
+import { SuccessResponse } from '../common/graphql-generic-responses/success-response.model';
 
 @Injectable()
 export class AuthService {
   constructor(
     @Inject(UsersService) private readonly usersService: UsersService,
+    @Inject(SendgridService) private readonly sendgridService: SendgridService,
   ) {}
 
-  async registerUser(dto: RegisterUserInput): Promise<Token | ErrorResponse> {
+  async registerUser(
+    dto: RegisterUserInput,
+  ): Promise<SuccessResponse | ErrorResponse> {
     const user = await this.usersService.findById(dto._id);
     if (!user) {
       return new ErrorResponse(`User with id: "${dto._id}" not found.`);
+    }
+
+    if (user.isActivated) {
+      return new ErrorResponse(`Your account is already activated.`);
     }
 
     const userByEmail = await this.usersService.findOne({ email: dto.email });
@@ -33,50 +41,41 @@ export class AuthService {
       );
     }
 
-    if (user.password) {
-      if (user.email === dto.email) {
-        return new ErrorResponse(`Your account is already registered.`);
-      } else if (user.email) {
-        return new ErrorResponse(
-          `Your account is already registered with different email address.`,
-        );
-      }
+    const linkId = uuid();
+
+    Object.assign(user, dto);
+    user.activationLinkId = linkId;
+
+    await this.usersService.edit(user);
+
+    const activationLink = `${process.env.BASE_URL}/activateAccount/${linkId}`;
+    const message: SendgridMessage = {
+      from: process.env.FROM_EMAIL_ADDRESS,
+      to: user.email,
+      html: HtmlEmailHelper.generateHtmlEmail(
+        `<h3> Activation link: ${activationLink}</h3>`,
+      ),
+      subject: 'Danger zone',
+      text: `Activation link: ${activationLink}`,
+    };
+
+    return this.sendgridService.send(message);
+  }
+
+  async activateAccount(id: string): Promise<Token | ErrorResponse> {
+    const user = await this.usersService.findOne({ activationLinkId: id });
+    if (!user) {
+      return new ErrorResponse(`User for specified link does not exist.`);
     }
 
-    dto.password = await hashPassword(dto.password);
-    Object.assign(user, dto);
+    user.isActivated = true;
+    user.activationLinkId = null;
 
     await this.usersService.edit(user);
 
     const getTokenInput: GetTokenInput = {
       grantType: GrantType.AccessToken,
-      userName: `${user.userName}-${user._id}`,
-    };
-
-    return this.getToken(getTokenInput);
-  }
-
-  async login(dto: LoginUserInput): Promise<Token | ErrorResponse> {
-    const user = await this.usersService.findOne({ email: dto.email });
-    if (!user) {
-      return new ErrorResponse(
-        `User with email address: "${dto.email}" not found.`,
-      );
-    }
-
-    if (!user.password) {
-      return new ErrorResponse(
-        `User with email address: "${dto.email}" is not registered.`,
-      );
-    }
-
-    if (!(await verifyPassword(user.password, dto.password))) {
-      return new ErrorResponse(`Wrong email or password.`);
-    }
-
-    const getTokenInput: GetTokenInput = {
-      grantType: GrantType.AccessToken,
-      userName: `${user.userName}-${user._id}`,
+      userId: user._id,
     };
 
     return this.getToken(getTokenInput);
@@ -102,7 +101,7 @@ export class AuthService {
 
     const getTokenInput: GetTokenInput = {
       grantType: GrantType.AccessToken,
-      userName: `${user.userName}-${user._id}`,
+      userId: user._id,
     };
 
     return this.getToken(getTokenInput);
@@ -110,15 +109,19 @@ export class AuthService {
 
   async getMagicLink(
     magicLinkParam: MagicLinkInput,
-  ): Promise<string | ErrorResponse> {
+  ): Promise<SuccessResponse | ErrorResponse> {
     const user = await this.usersService.findOne({
       email: magicLinkParam.email,
     });
 
-    if (!user || !user.password) {
+    if (!user) {
       return new ErrorResponse(
         `User with email: "${magicLinkParam.email}" is not registered.`,
       );
+    }
+
+    if (!user.isActivated) {
+      return new ErrorResponse(`User account is not activated.`);
     }
 
     const linkId = uuid();
@@ -128,14 +131,22 @@ export class AuthService {
 
     await this.usersService.edit(user);
 
-    return `${process.env.BASE_URL}/link/${linkId}`;
+    const magicLink = `${process.env.BASE_URL}/link/${linkId}`;
+    const message: SendgridMessage = {
+      from: process.env.FROM_EMAIL_ADDRESS,
+      to: magicLinkParam.email,
+      html: HtmlEmailHelper.generateHtmlEmail(`<h3> Link: ${magicLink}</h3>`),
+      subject: 'Danger zone',
+      text: `Link: ${magicLink}`,
+    };
+
+    return this.sendgridService.send(message);
   }
 
   async getToken(getTokenInput: GetTokenInput): Promise<Token | ErrorResponse> {
     switch (getTokenInput.grantType) {
       case GrantType.AccessToken:
-        const id = getTokenInput.userName.split('-').pop();
-        const user = await this.usersService.findById(id);
+        const user = await this.usersService.findById(getTokenInput.userId);
 
         return this.generateToken(user);
 

@@ -5,14 +5,11 @@ import { Token } from './models/token.model';
 import { RegisterUserInput } from './models/register-user.input';
 import { SuccessResponse } from '../common/graphql-generic-responses/success-response.model';
 import { MagicLinkInput } from './models/magic-link.input';
-import { LoginUserInput } from './models/login-user.input';
-import { MagicLinkUnion } from './unions/magic-link.union';
 import { ErrorResponse } from '../common/graphql-generic-responses/error-response.model';
 import { TokenUnion } from './unions/token.union';
 import { GetTokenInput } from './models/get-token.input';
 import { SendgridService } from '../sendgrid/sendgrid.service';
-import { SendgridMessage } from '../sendgrid/models/sendgrid-message.model';
-import { HtmlEmailHelper } from '../sendgrid/helpers/html-email.helper';
+import { GenericResponseUnion } from '../common/unions/generic-response.union';
 
 @Resolver()
 export class AuthResolver {
@@ -21,10 +18,10 @@ export class AuthResolver {
     @Inject(SendgridService) private readonly sendgridService: SendgridService,
   ) {}
 
-  @Mutation(() => TokenUnion)
+  @Mutation(() => GenericResponseUnion)
   async register(
     @Args('registerUserParam') param: RegisterUserInput,
-  ): Promise<Token | ErrorResponse> {
+  ): Promise<SuccessResponse | ErrorResponse> {
     return this.authService.registerUser(param);
   }
 
@@ -36,10 +33,10 @@ export class AuthResolver {
   }
 
   @Mutation(() => TokenUnion)
-  async login(
-    @Args('loginUserParam') param: LoginUserInput,
+  async activateAccount(
+    @Args('activationLinkId') id: string,
   ): Promise<Token | ErrorResponse> {
-    return this.authService.login(param);
+    return this.authService.activateAccount(id);
   }
 
   @Mutation(() => TokenUnion)
@@ -49,28 +46,10 @@ export class AuthResolver {
     return this.authService.loginByMagicLink(id);
   }
 
-  @Mutation(() => MagicLinkUnion)
+  @Mutation(() => GenericResponseUnion)
   async sendMagicLink(
     @Args('magicLinkParam') magicLinkParam: MagicLinkInput,
   ): Promise<SuccessResponse | ErrorResponse> {
-    const magicLinkResponse = await this.authService.getMagicLink(
-      magicLinkParam,
-    );
-
-    if (magicLinkResponse instanceof ErrorResponse) {
-      return magicLinkResponse as ErrorResponse;
-    }
-
-    const message: SendgridMessage = {
-      from: process.env.FROM_EMAIL_ADDRESS,
-      to: magicLinkParam.email,
-      html: HtmlEmailHelper.generateHtmlEmail(
-        `<h3> Link: ${magicLinkResponse}</h3>`,
-      ),
-      subject: 'Danger zone',
-      text: `Link: ${magicLinkResponse}`,
-    };
-
-    return this.sendgridService.send(message);
+    return this.authService.getMagicLink(magicLinkParam);
   }
 }

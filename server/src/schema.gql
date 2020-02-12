@@ -28,9 +28,11 @@ type ErrorResponse {
   message: String!
 }
 
+union GenericResponse = SuccessResponse | ErrorResponse
+
 input GetTokenInput {
   grantType: GrantType!
-  userName: String
+  userId: ObjectId
   refreshToken: String
 }
 
@@ -38,13 +40,6 @@ enum GrantType {
   AccessToken
   RefreshToken
 }
-
-input LoginUserInput {
-  email: String!
-  password: String!
-}
-
-union MagicLink = SuccessResponse | ErrorResponse
 
 input MagicLinkInput {
   email: String!
@@ -54,11 +49,11 @@ type Mutation {
   addUser(user: AddUserInput!): User!
   editUser(user: EditUserInput!): User!
   deleteUser(userId: ObjectId!): ObjectId!
-  register(registerUserParam: RegisterUserInput!): TokenUnion!
+  register(registerUserParam: RegisterUserInput!): GenericResponse!
   token(getToken: GetTokenInput!): TokenUnion!
-  login(loginUserParam: LoginUserInput!): TokenUnion!
+  activateAccount(activationLinkId: String!): TokenUnion!
   loginByMagicLink(magicLinkId: String!): TokenUnion!
-  sendMagicLink(magicLinkParam: MagicLinkInput!): MagicLink!
+  sendMagicLink(magicLinkParam: MagicLinkInput!): GenericResponse!
   addReport(report: AddReportInput!): Report!
   editReport(report: EditReportInput!): Report!
 }
@@ -75,7 +70,6 @@ type Query {
 input RegisterUserInput {
   _id: ObjectId!
   email: String!
-  password: String!
 }
 
 type Report {
@@ -100,5 +94,4 @@ type User {
   _id: ObjectId!
   userName: String!
   email: String
-  password: String
 }
