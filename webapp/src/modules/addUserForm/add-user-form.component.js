@@ -1,13 +1,22 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useContext } from 'react';
 import { Input, Icon, Button, Spin } from 'antd';
-import { ADD_USER } from './add-user-form.mutations';
-import { TOKEN } from '../loginForm/login-form.mutations';
+import { ADD_USER, TOKEN } from './add-user-form.mutations';
 import { useMutation } from '@apollo/react-hooks';
 import { openErrorNotification, openInfoNotification } from '../../utils/notifications';
 import { ERROR_RESPONSE } from '../../utils/constants/respons-types.const';
-import { saveUserToLocalStorage, saveTokenToLocalStorage } from '../../utils/helpers/local-storage.helper';
+import { AuthContext } from '../../contexts/auth.context';
+import styled from 'styled-components';
+
+const CreateAccountContainer = styled.div`
+  display: flex;
+`;
+
+const UserNameInput = styled(Input)`
+  margin-right: 8px !important;
+`;
 
 export const AddUserForm = () => {
+  const authContext = useContext(AuthContext);
   const [username, setUsername] = useState('');
   const [addUser, { loading: isAddUserLoading }] = useMutation(ADD_USER);
   const [getToken, { loading: isTokenLoading }] = useMutation(TOKEN);
@@ -21,16 +30,13 @@ export const AddUserForm = () => {
     }
 
     const user = userRes.data.addUser;
-    const userNameId = `${user.userName}-${user._id}`;
-    const tokenData = await getToken({ variables: { userName: userNameId } });
+    const tokenData = await getToken({ variables: { userId: user._id } });
 
     if (tokenData.data.token.__typename === ERROR_RESPONSE) {
       openErrorNotification(tokenData.data.token.message);
       return;
     }
-
-    saveTokenToLocalStorage(tokenData.data.token);
-    saveUserToLocalStorage(user);
+    authContext.login(tokenData.data.token);
 
     openInfoNotification('Your account has been created!');
 
@@ -39,15 +45,15 @@ export const AddUserForm = () => {
 
   return (
     <Spin spinning={isTokenLoading || isAddUserLoading}>
-      <div style={{ display: 'flex' }}>
-        <Input
+      <CreateAccountContainer>
+        <UserNameInput
           onChange={(e) => setUsername(e.target.value)}
           value={username}
           prefix={<Icon type='user' style={{ color: 'rgba(0,0,0,.25)' }} />}
-          placeholder='Username'
+          placeholder='User name'
         />
-        <Button onClick={onCreateAccount}>Create an account</Button>
-      </div>
+        <Button onClick={onCreateAccount}>Create</Button>
+      </CreateAccountContainer>
     </Spin>
   );
 };

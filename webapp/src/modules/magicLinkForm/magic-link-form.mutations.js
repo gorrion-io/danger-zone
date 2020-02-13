@@ -1,8 +1,8 @@
 import gql from 'graphql-tag';
 
-export const REGISTER = gql`
-  mutation register($_id: ObjectId!, $email: String!) {
-    register(registerUserParam: { _id: $_id, email: $email }) {
+export const SEND_MAGIC_LINK = gql`
+  mutation sendMagicLink($email: String!) {
+    sendMagicLink(magicLinkParam: { email: $email }) {
       ... on SuccessResponse {
         message
       }

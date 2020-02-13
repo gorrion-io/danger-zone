@@ -19,7 +19,12 @@ export function getUserFromLocalStorage() {
 
 export function getTokenFromLocalStorage() {
   return {
-    authToken: localStorage.getItem(AUTH_TOKEN),
+    token: localStorage.getItem(AUTH_TOKEN),
     refreshToken: localStorage.getItem(REFRESH_TOKEN),
   };
+}
+
+export function removeTokenFromLocalStorage() {
+  localStorage.removeItem(AUTH_TOKEN);
+  localStorage.removeItem(REFRESH_TOKEN);
 }

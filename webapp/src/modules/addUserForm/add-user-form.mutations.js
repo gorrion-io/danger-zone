@@ -8,3 +8,17 @@ export const ADD_USER = gql`
     }
   }
 `;
+
+export const TOKEN = gql`
+  mutation token($userId: ObjectId!) {
+    token(getToken: { grantType: AccessToken, userId: $userId }) {
+      ... on Token {
+        token
+        refreshToken
+      }
+      ... on ErrorResponse {
+        message
+      }
+    }
+  }
+`;

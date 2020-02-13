@@ -4,10 +4,11 @@ import React from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { client } from './ApolloClient';
 import { ReportList } from './modules/reportList/report-list.component';
-import { AddUserForm } from './modules/addUserForm/add-user-form.component';
 import { RegisterForm } from './modules/registerForm/register-form.component';
-import { LoginForm } from './modules/loginForm/login-form.component';
+import { MagicLinkForm } from './modules/magicLinkForm/magic-link-form.component';
 import { MagicLinkHandler } from './modules/magicLinkHandler/magic-link-handler.component';
+import { ActivateAccountHandler } from './modules/activateAccountHandler/activate-account-handler.component';
+import { Navbar } from './modules/navbar/navbar.component';
 
 const { Header, Content, Footer } = Layout;
 
@@ -17,10 +18,12 @@ function App() {
       <Layout>
         <Content>
           <Router>
-            <Header>HEDER</Header>
+            <Header>
+              <Navbar />
+            </Header>
             <Switch>
               <Route path='/login'>
-                <LoginForm />
+                <MagicLinkForm />
               </Route>
               <Route path='/register'>
                 <RegisterForm />
@@ -28,8 +31,10 @@ function App() {
               <Route path='/link/:id'>
                 <MagicLinkHandler />
               </Route>
+              <Route path='/activateAccount/:id'>
+                <ActivateAccountHandler />
+              </Route>
               <Route path='/'>
-                <AddUserForm />
                 <ReportList />
               </Route>
             </Switch>
