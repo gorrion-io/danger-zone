@@ -35,7 +35,7 @@ export const Navbar = () => {
   const [userName, setUserName] = useState('');
 
   useEffect(() => {
-    const userName = authContext.isAuth ? authContext.user.userName : '';
+    const userName = authContext.isAuth ? authContext.payload.userName : '';
     setUserName(userName);
   }, [authContext]);
 

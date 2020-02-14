@@ -1,43 +1,52 @@
 import React, { createContext, useState, useCallback, useEffect } from 'react';
-import { getTokenFromLocalStorage, saveTokenToLocalStorage, removeTokenFromLocalStorage } from '../utils/helpers/local-storage.helper';
 import jwt from 'jwt-decode';
+import useLocalStorage from '../utils/custom-hooks/use-local-storage.hook';
+import { AUTH_TOKEN, REFRESH_TOKEN } from '../utils/constants/local-storage.const';
+import { getTokenObjectToSave, isExpired } from '../utils/helpers/auth-token.helper';
 
 export const AuthContext = createContext({
   isAuth: false,
-  user: null,
+  payload: null,
   login: () => {},
   logout: () => {},
 });
 
 const AuthContextProvider = (props) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [user, setUser] = useState({});
+  const [payload, setPayload] = useState({});
+  const [token, setToken, removeToken] = useLocalStorage(AUTH_TOKEN, null);
+  const [refreshToken, setRefreshToken, removeRefreshToken] = useLocalStorage(REFRESH_TOKEN, null);
 
-  const setAuthentication = useCallback((token) => {
-    const user = jwt(token);
-    setUser(user);
+  const setAuthentication = useCallback((token, payload) => {
+    setPayload(payload);
     setIsAuthenticated(true);
   }, []);
 
   useEffect(() => {
-    const token = getTokenFromLocalStorage();
-    if (token && token.token) {
-      setAuthentication(token.token);
+    if (token && token.token && !isExpired(refreshToken)) {
+      const payload = jwt(token.token);
+      setAuthentication(token, payload);
+    } else {
+      logoutHandler();
     }
   }, []);
 
   const loginHandler = useCallback((token) => {
-    setAuthentication(token.token);
-    saveTokenToLocalStorage(token);
+    const payload = jwt(token.token);
+
+    setAuthentication(token, payload);
+    setToken(getTokenObjectToSave(token.token));
+    setRefreshToken(getTokenObjectToSave(token.refreshToken));
   }, []);
 
   const logoutHandler = useCallback(() => {
     setIsAuthenticated(false);
-    removeTokenFromLocalStorage();
+    removeToken();
+    removeRefreshToken();
   }, []);
 
   return (
-    <AuthContext.Provider value={{ login: loginHandler, logout: logoutHandler, isAuth: isAuthenticated, user: user }}>
+    <AuthContext.Provider value={{ login: loginHandler, logout: logoutHandler, isAuth: isAuthenticated, payload: payload }}>
       {/* eslint-disable-next-line react/prop-types */}
       {props.children}
     </AuthContext.Provider>
