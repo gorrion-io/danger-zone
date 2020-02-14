@@ -14,7 +14,7 @@ export const RegisterForm = () => {
   const [register, { loading: isLoading }] = useMutation(REGISTER);
 
   const onRegister = useCallback(async () => {
-    const user = authContext.user;
+    const user = authContext.payload;
 
     if (!user || !user._id || !user.userName) {
       openErrorNotification('Cannot claim an account. Create an account first.');
