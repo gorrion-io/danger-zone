@@ -53,7 +53,7 @@ export class AuthService {
       from: process.env.FROM_EMAIL_ADDRESS,
       to: user.email,
       html: HtmlEmailHelper.generateHtmlEmail(
-        `<h3> Activation link: ${activationLink}</h3>`,
+        `<h3> Activation link: <a href="${activationLink}">Click to activate an account</a></h3>`,
       ),
       subject: 'Danger zone',
       text: `Activation link: ${activationLink}`,
@@ -135,7 +135,9 @@ export class AuthService {
     const message: SendgridMessage = {
       from: process.env.FROM_EMAIL_ADDRESS,
       to: magicLinkParam.email,
-      html: HtmlEmailHelper.generateHtmlEmail(`<h3> Link: ${magicLink}</h3>`),
+      html: HtmlEmailHelper.generateHtmlEmail(
+        `<h3> Link: <a href="${magicLink}">Click to login</a></h3>`,
+      ),
       subject: 'Danger zone',
       text: `Link: ${magicLink}`,
     };
