@@ -48,6 +48,7 @@ type Mutation {
   token(signIn: SignInInput!): TokenModel!
   addReport(report: AddReportInput!): Report!
   editReport(report: EditReportInput!): Report!
+  deleteReport(id: ObjectId!): ObjectId!
 }
 
 """Mongo object id scalar type"""
@@ -80,7 +81,7 @@ enum Role {
 
 input SignInInput {
   grantType: GrantType!
-  userName: String
+  userId: ObjectId
   refreshToken: String
 }
 
