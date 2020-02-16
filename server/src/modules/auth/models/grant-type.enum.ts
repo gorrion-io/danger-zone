@@ -7,4 +7,5 @@ export enum GrantType {
 
 registerEnumType(GrantType, {
   name: 'GrantType',
+  description: 'Available grant types',
 });

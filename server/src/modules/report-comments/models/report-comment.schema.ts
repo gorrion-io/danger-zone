@@ -7,16 +7,17 @@ import { ObjectId } from 'bson';
 import { Schema } from 'mongoose';
 import { Field, ObjectType } from 'type-graphql';
 import { ObjectIdScalar } from '../../common/graphql-scalars/object-id.scalar';
+import { Report } from '../../reports/models/report.schema';
 import { User } from '../../users/models/user.schema';
 
-@Pre<Report>('save', function() {
+@Pre<ReportComment>('save', function() {
   this.lastEditDate = new Date();
 })
-@Pre<Report>(['find', 'findOne'], function() {
+@Pre<ReportComment>(['find', 'findOne'], function() {
   this.where({ isDeleted: false });
 })
 @ObjectType()
-export class Report {
+export class ReportComment {
   @Field(() => ObjectIdScalar)
   readonly _id: ObjectId;
 
@@ -29,28 +30,26 @@ export class Report {
   lastEditDate: Date;
 
   @Field()
-  @Property({ required: true, maxlength: 50 })
-  title: string;
-
-  @Field()
-  @Property({ required: true, maxlength: 250 })
-  description: string;
+  @Property({ required: true, maxlength: 500 })
+  message: string;
 
   @Field(() => ObjectIdScalar)
-  @Property({ ref: User })
-  reportedBy: ObjectId;
+  @Property({ required: true, ref: User })
+  addedBy: ObjectId;
+
+  @Field(() => ObjectIdScalar)
+  @Property({ required: true, ref: Report })
+  reportId: ObjectId;
+
+  @Field(() => ObjectIdScalar, { nullable: true })
+  @Property({ ref: ReportComment })
+  answeredTo?: ObjectId;
 
   @Field()
   @Property({ required: true, default: false })
   isDeleted: boolean;
-
-  @Field()
-  @Property({ required: true })
-  latitude: number;
-
-  @Field()
-  @Property({ required: true })
-  longitude: number;
 }
 
-export const ReportSchema: Schema<typeof Report> = buildSchema(Report);
+export const ReportCommentSchema: Schema<typeof ReportComment> = buildSchema(
+  ReportComment,
+);

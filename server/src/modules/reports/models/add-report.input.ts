@@ -7,4 +7,10 @@ export class AddReportInput {
 
   @Field()
   description: string;
+
+  @Field()
+  latitude: number;
+
+  @Field()
+  longitude: number;
 }

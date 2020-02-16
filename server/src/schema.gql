@@ -6,22 +6,33 @@
 input AddReportInput {
   title: String!
   description: String!
+  latitude: Float!
+  longitude: Float!
 }
 
 input AddUserInput {
   userName: String!
+  role: Role
 }
+
+"""
+The javascript `Date` as string. Type represents date and time as the ISO Date string.
+"""
+scalar DateTime
 
 input EditReportInput {
   _id: ObjectId!
   title: String
   description: String
+  latitude: Float
+  longitude: Float
 }
 
 input EditUserInput {
   _id: ObjectId!
   userName: String
   email: String
+  role: Role
 }
 
 type ErrorResponse {
@@ -36,6 +47,7 @@ input GetTokenInput {
   refreshToken: String
 }
 
+"""Available grant types"""
 enum GrantType {
   AccessToken
   RefreshToken
@@ -56,6 +68,7 @@ type Mutation {
   sendMagicLink(magicLinkParam: MagicLinkInput!): GenericResponse!
   addReport(report: AddReportInput!): Report!
   editReport(report: EditReportInput!): Report!
+  deleteReport(id: ObjectId!): ObjectId!
 }
 
 """Mongo object id scalar type"""
@@ -74,9 +87,21 @@ input RegisterUserInput {
 
 type Report {
   _id: ObjectId!
+  creationDate: DateTime!
+  lastEditDate: DateTime!
   title: String!
   description: String!
   reportedBy: ObjectId!
+  isDeleted: Boolean!
+  latitude: Float!
+  longitude: Float!
+}
+
+"""Available user roles"""
+enum Role {
+  Admin
+  Maintainer
+  StandardUser
 }
 
 type SuccessResponse {
@@ -94,4 +119,5 @@ type User {
   _id: ObjectId!
   userName: String!
   email: String
+  role: Role!
 }

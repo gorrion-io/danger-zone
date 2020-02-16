@@ -9,6 +9,7 @@ import { MagicLinkForm } from './modules/magicLinkForm/magic-link-form.component
 import { MagicLinkHandler } from './modules/magicLinkHandler/magic-link-handler.component';
 import { ActivateAccountHandler } from './modules/activateAccountHandler/activate-account-handler.component';
 import { Navbar } from './modules/navbar/navbar.component';
+import { MapContainer } from './modules/map/map.component';
 
 const { Header, Content, Footer } = Layout;
 
@@ -35,6 +36,7 @@ function App() {
                 <ActivateAccountHandler />
               </Route>
               <Route path='/'>
+                <MapContainer />
                 <ReportList />
               </Route>
             </Switch>
