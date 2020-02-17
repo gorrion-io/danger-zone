@@ -4,14 +4,19 @@ import React from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { client } from './ApolloClient';
 import { ReportList } from './modules/reportList/report-list.component';
+import { AddReportForm } from './modules/addReport/add-report-form.component';
 import { RegisterForm } from './modules/registerForm/register-form.component';
 import { MagicLinkForm } from './modules/magicLinkForm/magic-link-form.component';
 import { MagicLinkHandler } from './modules/magicLinkHandler/magic-link-handler.component';
 import { ActivateAccountHandler } from './modules/activateAccountHandler/activate-account-handler.component';
 import { Navbar } from './modules/navbar/navbar.component';
 import { MapContainer } from './modules/map/map.component';
+import styled from 'styled-components';
 
 const { Header, Content, Footer } = Layout;
+const ReportsContainer = styled.div`
+  padding: 16px 30px;
+`;
 
 function App() {
   return (
@@ -37,6 +42,7 @@ function App() {
               </Route>
               <Route path='/'>
                 <MapContainer />
+                <AddReportForm />
                 <ReportList />
               </Route>
             </Switch>

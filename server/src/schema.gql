@@ -91,7 +91,7 @@ type Report {
   lastEditDate: DateTime!
   title: String!
   description: String!
-  reportedBy: ObjectId!
+  reportedBy: User!
   isDeleted: Boolean!
   latitude: Float!
   longitude: Float!

@@ -1,5 +1,5 @@
 import { Inject, UseGuards } from '@nestjs/common';
-import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Context, Mutation, Query, Resolver, ResolveProperty, Parent } from '@nestjs/graphql';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { AuthGuard } from '../auth/guards/user-auth.guard';
 import { ICurrentUser } from '../auth/interfaces/current-user.interface';
@@ -9,7 +9,7 @@ import { AddReportInput } from './models/add-report.input';
 import { EditReportInput } from './models/edit-report.input';
 import { Report } from './models/report.schema';
 import { ReportsService } from './reports.service';
-
+import { User } from '../users/models/user.schema';
 @Resolver(() => Report)
 @UseGuards(AuthGuard)
 export class ReportsResolver {
@@ -17,6 +17,10 @@ export class ReportsResolver {
     @Inject(ReportsService) private readonly reportsService: ReportsService,
   ) {}
 
+  @ResolveProperty(type => User)
+    async reportedBy(@Parent() report: Report): Promise<User> {
+      return this.reportsService.resolveUser(report.reportedBy);
+  }
   @Roles(Role.StandardUser)
   @Query(() => [Report])
   async findAllReports(): Promise<Report[]> {

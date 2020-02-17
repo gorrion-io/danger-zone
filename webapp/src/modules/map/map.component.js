@@ -1,14 +1,35 @@
 import React, { useState, useEffect } from 'react';
-import MapGL from 'react-map-gl';
+import MapGL, { Marker } from 'react-map-gl';
 import styled from 'styled-components';
 
 const MapBox = styled.div`
   margin: 20px auto;
-  width: 95%;
+  width: 100%;
+  div {
+    cursor: ${props => props.pointer && 'pointer !important'};
+  }
 `;
 const MAPBOX_TOKEN = process.env.REACT_APP_API_KEY;
 
-export const MapContainer = () => {
+const Markers = ({ markers, ...props }) => {
+  return (
+    <>
+      {markers &&
+        markers.length &&
+        markers.map((marker) => {
+          return (
+            Object.entries(marker).length !== 0 && (
+              <Marker key={(marker._id || (marker.name + marker.longitude)) + marker.longitude} longitude={marker.longitude} latitude={marker.latitude}>
+                <img src='marker.png' style={{ width: '20px' }} alt='marker'/>
+              </Marker>
+            )
+          );
+        })}
+    </>
+  );
+};
+
+export const MapContainer = (props) => {
   const [viewport, setViewport] = useState({
     latitude: 37.8,
     longitude: -122.4,
@@ -36,7 +57,7 @@ export const MapContainer = () => {
   }, []);
 
   return (
-    <MapBox>
+    <MapBox pointer={props.pointer}>
       <MapGL
         {...viewport}
         width='100%'
@@ -45,7 +66,9 @@ export const MapContainer = () => {
         mapStyle='mapbox://styles/mapbox/dark-v9'
         onViewportChange={setViewport}
         mapboxApiAccessToken={MAPBOX_TOKEN}
-      />
+        onClick={props.onClick}>
+        <Markers markers={props.markers} />
+      </MapGL>
     </MapBox>
   );
 };
