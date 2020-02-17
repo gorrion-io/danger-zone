@@ -8,7 +8,7 @@ const MapBox = styled.div`
 `;
 const MAPBOX_TOKEN = process.env.REACT_APP_API_KEY;
 
-export const MapContainer = (props) => {
+export const MapContainer = () => {
   const [viewport, setViewport] = useState({
     latitude: 37.8,
     longitude: -122.4,

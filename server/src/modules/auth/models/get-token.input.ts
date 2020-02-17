@@ -1,13 +1,14 @@
 import { Field, InputType } from 'type-graphql';
 import { GrantType } from './grant-type.enum';
-import { ObjectIdScalar } from '../../common/graphql-scalars/object-id.scalar';
 import { ObjectId } from 'bson';
+import { ObjectIdScalar } from '../../common/graphql-scalars/object-id.scalar';
+
 @InputType()
-export class SignInInput {
-  @Field(type => GrantType)
+export class GetTokenInput {
+  @Field(() => GrantType)
   grantType: GrantType;
 
-  @Field(type => ObjectIdScalar, { nullable: true })
+  @Field(() => ObjectIdScalar, { nullable: true })
   userId?: ObjectId;
 
   @Field({ nullable: true })

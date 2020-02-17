@@ -35,17 +35,37 @@ input EditUserInput {
   role: Role
 }
 
+type ErrorResponse {
+  message: String!
+}
+
+union GenericResponse = SuccessResponse | ErrorResponse
+
+input GetTokenInput {
+  grantType: GrantType!
+  userId: ObjectId
+  refreshToken: String
+}
+
 """Available grant types"""
 enum GrantType {
   AccessToken
   RefreshToken
 }
 
+input MagicLinkInput {
+  email: String!
+}
+
 type Mutation {
   addUser(user: AddUserInput!): User!
   editUser(user: EditUserInput!): User!
   deleteUser(userId: ObjectId!): ObjectId!
-  token(signIn: SignInInput!): TokenModel!
+  register(registerUserParam: RegisterUserInput!): GenericResponse!
+  token(getToken: GetTokenInput!): TokenUnion!
+  activateAccount(activationLinkId: String!): TokenUnion!
+  loginByMagicLink(magicLinkId: String!): TokenUnion!
+  sendMagicLink(magicLinkParam: MagicLinkInput!): GenericResponse!
   addReport(report: AddReportInput!): Report!
   editReport(report: EditReportInput!): Report!
   deleteReport(id: ObjectId!): ObjectId!
@@ -58,6 +78,11 @@ type Query {
   findAllUsers: [User!]!
   findAllReports: [Report!]!
   findReport(id: ObjectId!): Report!
+}
+
+input RegisterUserInput {
+  _id: ObjectId!
+  email: String!
 }
 
 type Report {
@@ -79,21 +104,20 @@ enum Role {
   StandardUser
 }
 
-input SignInInput {
-  grantType: GrantType!
-  userId: ObjectId
-  refreshToken: String
+type SuccessResponse {
+  message: String!
 }
 
-type TokenModel {
+type Token {
   token: String!
   refreshToken: String!
 }
+
+union TokenUnion = Token | ErrorResponse
 
 type User {
   _id: ObjectId!
   userName: String!
   email: String
-  password: String
   role: Role!
 }

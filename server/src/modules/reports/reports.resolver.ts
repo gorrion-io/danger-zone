@@ -26,7 +26,7 @@ export class ReportsResolver {
   @Roles(Role.StandardUser)
   @Query(() => Report)
   async findReport(@Args('id') id: ObjectIdScalar): Promise<Report> {
-    return this.reportsService.findOne(id);
+    return this.reportsService.findById(id);
   }
 
   @Roles(Role.StandardUser)
