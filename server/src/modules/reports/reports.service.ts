@@ -27,7 +27,7 @@ export class ReportsService {
     return this.reportModel.find().exec();
   }
 
-  async findOne(id: ObjectIdScalar): Promise<Report> {
+  async findById(id: ObjectIdScalar): Promise<Report> {
     return this.reportModel.findById(id);
   }
 
