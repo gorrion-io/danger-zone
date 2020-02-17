@@ -19,8 +19,8 @@ export class ReportsService {
     @Inject(UsersService) private readonly usersService: UsersService,
   ) {}
 
-  async resolveUser(reportedBy: any): Promise<User> {
-   return this.usersService.findOne(reportedBy);
+  async resolveUser(reportedBy: User | ObjectId): Promise<User> {
+    return (reportedBy instanceof User) ? reportedBy : this.usersService.findOne(reportedBy);
   }
 
   async findAll(): Promise<Report[]> {
@@ -43,9 +43,10 @@ export class ReportsService {
 
   async edit(dto: EditReportInput, user: ICurrentUser): Promise<Report> {
     const report = await this.reportModel.findById(dto._id);
-    // if (!report || !report.reportedBy.equals(user._id)) {
-    //   throw new Error(`Report with id: "${dto._id}" not found.`);
-    // }
+    if (!report || !(report.reportedBy instanceof ObjectId && report.reportedBy.equals(user._id) 
+    || report.reportedBy instanceof User && report.reportedBy._id.equals(user._id))) {
+      throw new Error(`Report with id: "${dto._id}" not found.`);
+    }
     Object.assign(report, dto);
 
     return report.save();

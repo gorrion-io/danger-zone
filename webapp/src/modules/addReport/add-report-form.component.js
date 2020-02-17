@@ -7,6 +7,7 @@ import { Formik } from 'formik';
 import styled from 'styled-components';
 import { MapContainer } from '../map/map.component';
 import { ErrorBox, ErrorMessage } from '../common/error-display';
+import { GET_ALL_REPORTS } from '../reportList/report-list.query';
 
 const AddButton = styled(Button)`
   && {
@@ -20,9 +21,11 @@ const AddReportButtonContainer = styled.div`
   justify-content: flex-end;
 `;
 
-export const AddReportForm = (props) => {
+export const AddReportForm = () => {
   const [showModal, setShowModal] = useState(false);
-  const [addReport] = useMutation(ADD_REPORT);
+  const [addReport] = useMutation(ADD_REPORT,  {refetchQueries: () => [{
+    query: GET_ALL_REPORTS
+}]});
   const [marker, setMarker] = useState({});
   const [error, setError] = useState(false);
   const handleClick = ({ lngLat: [longitude, latitude] }) => {
@@ -35,6 +38,8 @@ export const AddReportForm = (props) => {
         variables: { report: { title: values.title, description: values.description, longitude: marker.longitude, latitude: marker.latitude } },
       });
       !error && setError(false);
+      setShowModal(false);
+      setMarker({});
     } catch (error) {
       setError(true);
     }
@@ -53,8 +58,9 @@ export const AddReportForm = (props) => {
             title: '',
             description: '',
           }}
-          onSubmit={async (values, actions) => {
+          onSubmit={async (values, {resetForm}) => {
             await submitForm(values);
+            resetForm({})
           }}
           render={(props) => (
             <Form onSubmit={props.handleSubmit}>

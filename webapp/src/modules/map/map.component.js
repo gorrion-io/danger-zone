@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import MapGL, { Marker } from 'react-map-gl';
 import styled from 'styled-components';
-import { Icon } from 'antd';
 
 const MapBox = styled.div`
   margin: 20px auto;
@@ -20,8 +19,8 @@ const Markers = ({ markers, ...props }) => {
         markers.map((marker) => {
           return (
             Object.entries(marker).length !== 0 && (
-              <Marker key={marker.name} longitude={marker.longitude} latitude={marker.latitude}>
-                <Icon type='exclamation' style={{ fontSize: '36px', color: 'red' }} />
+              <Marker key={(marker._id || (marker.name + marker.longitude)) + marker.longitude} longitude={marker.longitude} latitude={marker.latitude}>
+                <img src='marker.png' style={{ width: '20px' }} alt='marker'/>
               </Marker>
             )
           );
