@@ -20,7 +20,8 @@
       {
         "code": 150
       }
-    ]
+    ],
+    "react/prop-types": 0
   },
   "parserOptions": {
     "sourceType": "module",
