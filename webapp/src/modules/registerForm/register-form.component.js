@@ -4,13 +4,20 @@ import { REGISTER } from './register-form.mutations';
 import { useMutation } from '@apollo/react-hooks';
 import { ERROR_RESPONSE } from '../../utils/constants/respons-types.const';
 import { openErrorNotification, openInfoNotification } from '../../utils/notifications';
-import { Redirect } from 'react-router-dom';
 import { AuthContext } from '../../contexts/auth.context';
+import styled from 'styled-components';
 
-export const RegisterForm = () => {
+const FormContainer = styled.div`
+  display: flex;
+`;
+
+const FormButton = styled(Button)`
+  margin-left: 8px !important;
+`;
+
+export const RegisterForm = (props) => {
   const authContext = useContext(AuthContext);
   const [email, setEmail] = useState('');
-  const [redirect, setRedirect] = useState(false);
   const [register, { loading: isLoading }] = useMutation(REGISTER);
 
   const onRegister = useCallback(async () => {
@@ -29,17 +36,14 @@ export const RegisterForm = () => {
       openErrorNotification(data.register.message);
     } else {
       openInfoNotification(data.register.message);
-      setRedirect(true);
     }
-  }, [email, authContext]);
 
-  if (redirect) {
-    return <Redirect to='/' />;
-  }
+    props.onRegistered();
+  }, [email, authContext]);
 
   return (
     <Spin spinning={isLoading}>
-      <div style={{ display: 'flex' }}>
+      <FormContainer>
         <Input
           onChange={(e) => setEmail(e.target.value)}
           value={email}
@@ -47,8 +51,8 @@ export const RegisterForm = () => {
           placeholder='Email'
           name='email'
         />
-        <Button onClick={onRegister}>Register</Button>
-      </div>
+        <FormButton onClick={onRegister}>Register</FormButton>
+      </FormContainer>
     </Spin>
   );
 };

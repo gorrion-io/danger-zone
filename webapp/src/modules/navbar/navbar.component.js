@@ -1,9 +1,9 @@
 import React, { useState, useContext, useEffect, useCallback } from 'react';
-import { Button } from 'antd';
+import { Button, Popover } from 'antd';
 import styled from 'styled-components';
 import { AuthContext } from '../../contexts/auth.context';
-import { useHistory } from 'react-router-dom';
 import { LoginModal } from '../loginModal/login-modal.component';
+import { RegisterForm } from '../registerForm/register-form.component';
 
 const HeaderContainer = styled.div`
   height: inherit;
@@ -31,17 +31,21 @@ const RegisterButton = LoginButton;
 
 export const Navbar = () => {
   const authContext = useContext(AuthContext);
-  const history = useHistory();
   const [userName, setUserName] = useState('');
+  const [showRegister, setShowRegister] = useState(true);
+  const [popoverVisible, setPopoverVisible] = useState(false);
 
   useEffect(() => {
     const userName = authContext.isAuth ? authContext.payload.userName : '';
     setUserName(userName);
+    setShowRegister(!authContext.payload.isActivated);
   }, [authContext]);
 
   const onLogout = useCallback(() => {
     authContext.logout();
   }, []);
+
+  const registerForm = <RegisterForm onRegistered={() => setPopoverVisible(false)} />;
 
   return (
     <HeaderContainer>
@@ -49,7 +53,11 @@ export const Navbar = () => {
         <LogInfoContainer>
           <UserName>Hello {userName}</UserName>
           <Button onClick={onLogout}>Logout</Button>
-          <RegisterButton onClick={() => history.push('/register')}>Register</RegisterButton>
+          {showRegister ? (
+            <Popover placement='bottomRight' content={registerForm} trigger='click' visible={popoverVisible}>
+              <RegisterButton onClick={() => setPopoverVisible(true)}>Register</RegisterButton>
+            </Popover>
+          ) : null}
         </LogInfoContainer>
       ) : (
         <LoginModal />
