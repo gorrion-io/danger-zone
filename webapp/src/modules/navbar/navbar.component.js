@@ -2,8 +2,8 @@ import React, { useState, useContext, useEffect, useCallback } from 'react';
 import { Button } from 'antd';
 import styled from 'styled-components';
 import { AuthContext } from '../../contexts/auth.context';
-import { AddUserForm } from '../addUserForm/add-user-form.component';
 import { useHistory } from 'react-router-dom';
+import { LoginModal } from '../loginModal/login-modal.component';
 
 const HeaderContainer = styled.div`
   height: inherit;
@@ -52,10 +52,7 @@ export const Navbar = () => {
           <RegisterButton onClick={() => history.push('/register')}>Register</RegisterButton>
         </LogInfoContainer>
       ) : (
-        <LogInfoContainer>
-          <AddUserForm />
-          <LoginButton onClick={() => history.push('/login')}>Login</LoginButton>
-        </LogInfoContainer>
+        <LoginModal />
       )}
     </HeaderContainer>
   );
