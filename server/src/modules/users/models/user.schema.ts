@@ -18,13 +18,20 @@ export class User {
   @Property()
   email?: string;
 
-  @Field({ nullable: true })
-  @Property()
-  password?: string;
-
   @Field(type => Role)
   @Property({ enum: Role, required: true, default: Role.StandardUser })
   role: Role;
-}
 
+  @Property()
+  magicLinkId?: string;
+
+  @Property()
+  magicLinkCreatedAt?: Date;
+
+  @Property()
+  activationLinkId?: string;
+
+  @Property()
+  isActivated?: boolean;
+}
 export const UserSchema: Schema<typeof User> = buildSchema(User);

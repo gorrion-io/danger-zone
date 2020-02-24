@@ -14,8 +14,13 @@ export class UsersService {
     private readonly userModel: ReturnModelType<typeof User>,
   ) {}
 
-  async findOne(id: ObjectIdScalar | ObjectId): Promise<User> {
-    return this.userModel.findById(id);
+  async findById(id: ObjectIdScalar | ObjectId | string): Promise<User> {
+    const _id = id instanceof ObjectIdScalar ? id : new ObjectId(id);
+    return this.userModel.findOne(_id);
+  }
+
+  async findOne(conditions): Promise<User> {
+    return this.userModel.findOne(conditions);
   }
 
   async findAll(): Promise<User[]> {
@@ -30,7 +35,7 @@ export class UsersService {
     return user.save();
   }
 
-  async edit(dto: EditUserInput): Promise<User> {
+  async edit(dto: EditUserInput | User): Promise<User> {
     const user = await this.userModel.findById(dto._id);
     if (!user) {
       throw new Error(`User with id: "${dto._id}" not found.`);
