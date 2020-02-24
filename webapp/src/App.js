@@ -5,7 +5,6 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { client } from './ApolloClient';
 import { ReportList } from './modules/reportList/report-list.component';
 import { AddReportForm } from './modules/addReport/add-report-form.component';
-import { RegisterForm } from './modules/registerForm/register-form.component';
 import { MagicLinkHandler } from './modules/magicLinkHandler/magic-link-handler.component';
 import { ActivateAccountHandler } from './modules/activateAccountHandler/activate-account-handler.component';
 import { Navbar } from './modules/navbar/navbar.component';
@@ -23,9 +22,6 @@ function App() {
               <Navbar />
             </Header>
             <Switch>
-              <Route path='/register'>
-                <RegisterForm />
-              </Route>
               <Route path='/link/:id'>
                 <MagicLinkHandler />
               </Route>
