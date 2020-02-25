@@ -179,7 +179,7 @@ export class AuthService {
       _id: user._id,
       userName: user.userName,
       role: user.role,
-      isActivated: user.isActivated ? true : false,
+      isActivated: !!user.isActivated,
     };
 
     const tokenResponse = new Token();

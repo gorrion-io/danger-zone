@@ -12,7 +12,9 @@ const FormContainer = styled.div`
 `;
 
 const FormButton = styled(Button)`
-  margin-left: 8px !important;
+  && {
+    margin-left: 8px;
+  }
 `;
 
 export const RegisterForm = (props) => {

@@ -24,7 +24,9 @@ const UserName = styled.div`
 `;
 
 const LoginButton = styled(Button)`
-  margin-left: 8px !important;
+  && {
+    margin-left: 8px;
+  }
 `;
 
 const RegisterButton = LoginButton;
@@ -34,12 +36,17 @@ export const Navbar = () => {
   const [userName, setUserName] = useState('');
   const [showRegister, setShowRegister] = useState(true);
   const [popoverVisible, setPopoverVisible] = useState(false);
+  const [registerBtnText, setRegisterBtnText] = useState('Register');
 
   useEffect(() => {
     const userName = authContext.isAuth ? authContext.payload.userName : '';
     setUserName(userName);
     setShowRegister(!authContext.payload.isActivated);
   }, [authContext]);
+
+  useEffect(() => {
+    setRegisterBtnText(popoverVisible ? 'Close' : 'Register');
+  }, [popoverVisible]);
 
   const onLogout = useCallback(() => {
     authContext.logout();
@@ -53,11 +60,11 @@ export const Navbar = () => {
         <LogInfoContainer>
           <UserName>Hello {userName}</UserName>
           <Button onClick={onLogout}>Logout</Button>
-          {showRegister ? (
+          {showRegister && (
             <Popover placement='bottomRight' content={registerForm} trigger='click' visible={popoverVisible}>
-              <RegisterButton onClick={() => setPopoverVisible(true)}>Register</RegisterButton>
+              <RegisterButton onClick={() => setPopoverVisible(!popoverVisible)}>{registerBtnText}</RegisterButton>
             </Popover>
-          ) : null}
+          )}
         </LogInfoContainer>
       ) : (
         <LoginModal />

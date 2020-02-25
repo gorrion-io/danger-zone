@@ -14,12 +14,16 @@ const FormContainer = styled.div`
 `;
 
 const FormButton = styled(Button)`
-  width: 100%;
-  margin-top: 8px !important;
+  && {
+    width: 100%;
+    margin-top: 8px;
+  }
 `;
 
 const UserNameInput = styled(Input)`
-  margin-right: 8px !important;
+  && {
+    margin-right: 8px;
+  }
 `;
 
 export const AddUserForm = () => {

@@ -19,7 +19,9 @@ const Paragraph = styled.p`
 `;
 
 const CancelButton = styled(Button)`
-  margin-top: 8px !important;
+  && {
+    margin-top: 8px;
+  }
 `;
 
 export const LoginModal = () => {
