@@ -7,12 +7,23 @@ import { ERROR_RESPONSE } from '../../utils/constants/respons-types.const';
 import { AuthContext } from '../../contexts/auth.context';
 import styled from 'styled-components';
 
-const CreateAccountContainer = styled.div`
+const FormContainer = styled.div`
   display: flex;
+  width: 100%;
+  flex-direction: column;
+`;
+
+const FormButton = styled(Button)`
+  && {
+    width: 100%;
+    margin-top: 8px;
+  }
 `;
 
 const UserNameInput = styled(Input)`
-  margin-right: 8px !important;
+  && {
+    margin-right: 8px;
+  }
 `;
 
 export const AddUserForm = () => {
@@ -22,6 +33,10 @@ export const AddUserForm = () => {
   const [getToken, { loading: isTokenLoading }] = useMutation(TOKEN);
 
   const onCreateAccount = useCallback(async () => {
+    if (!username) {
+      return;
+    }
+
     const userRes = await addUser({ variables: { userName: username } });
 
     if (userRes.data.addUser.__typename === ERROR_RESPONSE) {
@@ -45,15 +60,15 @@ export const AddUserForm = () => {
 
   return (
     <Spin spinning={isTokenLoading || isAddUserLoading}>
-      <CreateAccountContainer>
+      <FormContainer>
         <UserNameInput
           onChange={(e) => setUsername(e.target.value)}
           value={username}
           prefix={<Icon type='user' style={{ color: 'rgba(0,0,0,.25)' }} />}
           placeholder='User name'
         />
-        <Button onClick={onCreateAccount}>Create</Button>
-      </CreateAccountContainer>
+        <FormButton onClick={onCreateAccount}>Create</FormButton>
+      </FormContainer>
     </Spin>
   );
 };

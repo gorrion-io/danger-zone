@@ -47,7 +47,6 @@ const AuthContextProvider = (props) => {
 
   return (
     <AuthContext.Provider value={{ login: loginHandler, logout: logoutHandler, isAuth: isAuthenticated, payload: payload }}>
-      {/* eslint-disable-next-line react/prop-types */}
       {props.children}
     </AuthContext.Provider>
   );

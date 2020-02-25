@@ -5,4 +5,5 @@ export interface ICurrentUser {
   _id: ObjectId;
   userName: string;
   role: Role;
+  isActivated: boolean;
 }
