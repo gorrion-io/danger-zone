@@ -4,6 +4,20 @@ import { SEND_MAGIC_LINK } from './magic-link-form.mutations';
 import { useMutation } from '@apollo/react-hooks';
 import { ERROR_RESPONSE } from '../../utils/constants/respons-types.const';
 import { openInfoNotification, openErrorNotification } from '../../utils/notifications';
+import styled from 'styled-components';
+
+const FormContainer = styled.div`
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+`;
+
+const FormButton = styled(Button)`
+  && {
+    width: 100%;
+    margin-top: 8px;
+  }
+`;
 
 export const MagicLinkForm = () => {
   const [email, setEmail] = useState('');
@@ -29,7 +43,7 @@ export const MagicLinkForm = () => {
 
   return (
     <Spin spinning={isSendMLLoading}>
-      <div style={{ display: 'flex' }}>
+      <FormContainer>
         <Input
           onChange={(e) => setEmail(e.target.value)}
           value={email}
@@ -37,8 +51,8 @@ export const MagicLinkForm = () => {
           placeholder='Email'
           name='magicLinkEmail'
         />
-        <Button onClick={onSendMagicLink}>Send access link</Button>
-      </div>
+        <FormButton onClick={onSendMagicLink}>Send access link</FormButton>
+      </FormContainer>
     </Spin>
   );
 };
