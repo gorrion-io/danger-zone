@@ -29,7 +29,7 @@ export class ReportCommentsResolver {
 
   @Mutation(() => ReportComment)
   @UseGuards(AuthGuard)
-  async addReport(
+  async addReportComment(
     @Args('comment') reportInput: AddReportCommentInput,
     @Context('user') user: ICurrentUser,
   ): Promise<ReportComment> {

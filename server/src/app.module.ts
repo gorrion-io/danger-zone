@@ -9,6 +9,7 @@ import { ReportsModule } from './modules/reports/reports.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { SendgridModule } from './modules/sendgrid/sendgrid.module';
 import { SendgridOptions } from './modules/sendgrid/models/sendgrid-options.model';
+import { ReportCommentsModule } from './modules/report-comments/report-comments.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { SendgridOptions } from './modules/sendgrid/models/sendgrid-options.mode
     UsersModule,
     ReportsModule,
     AuthModule,
+    ReportCommentsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

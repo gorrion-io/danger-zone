@@ -3,6 +3,12 @@
 # !!!   DO NOT MODIFY THIS FILE BY YOURSELF   !!!
 # -----------------------------------------------
 
+input AddReportCommentInput {
+  message: String!
+  reportId: ObjectId!
+  answeredTo: ObjectId
+}
+
 input AddReportInput {
   title: String!
   description: String!
@@ -19,6 +25,11 @@ input AddUserInput {
 The javascript `Date` as string. Type represents date and time as the ISO Date string.
 """
 scalar DateTime
+
+input EditReportCommentInput {
+  _id: ObjectId!
+  message: String!
+}
 
 input EditReportInput {
   _id: ObjectId!
@@ -67,8 +78,9 @@ type Mutation {
   loginByMagicLink(magicLinkId: String!): TokenUnion!
   sendMagicLink(magicLinkParam: MagicLinkInput!): GenericResponse!
   addReport(report: AddReportInput!): Report!
-  editReport(report: EditReportInput!): Report!
+  editReport(comment: EditReportCommentInput!): ReportComment!
   deleteReport(id: ObjectId!): ObjectId!
+  addReportComment(comment: AddReportCommentInput!): ReportComment!
 }
 
 """Mongo object id scalar type"""
@@ -78,6 +90,8 @@ type Query {
   findAllUsers: [User!]!
   findAllReports: [Report!]!
   findReport(id: ObjectId!): Report!
+  findAllComments(id: ObjectId!): [ReportComment!]!
+  findComment(id: ObjectId!): ReportComment!
 }
 
 input RegisterUserInput {
@@ -95,6 +109,17 @@ type Report {
   isDeleted: Boolean!
   latitude: Float!
   longitude: Float!
+}
+
+type ReportComment {
+  _id: ObjectId!
+  creationDate: DateTime!
+  lastEditDate: DateTime
+  message: String!
+  addedBy: ObjectId!
+  reportId: ObjectId!
+  answeredTo: ObjectId
+  isDeleted: Boolean!
 }
 
 """Available user roles"""

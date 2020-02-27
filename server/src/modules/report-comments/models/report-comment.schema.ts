@@ -25,9 +25,9 @@ export class ReportComment {
   @Property({ required: true })
   creationDate: Date;
 
-  @Field()
-  @Property({ required: true })
-  lastEditDate: Date;
+  @Field({ nullable: true })
+  @Property({ required: false })
+  lastEditDate?: Date;
 
   @Field()
   @Property({ required: true, maxlength: 500 })
