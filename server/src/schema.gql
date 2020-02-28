@@ -116,7 +116,7 @@ type ReportComment {
   creationDate: DateTime!
   lastEditDate: DateTime
   message: String!
-  addedBy: ObjectId!
+  addedBy: User!
   reportId: ObjectId!
   answeredTo: ObjectId
   isDeleted: Boolean!

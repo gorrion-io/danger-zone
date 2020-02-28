@@ -9,6 +9,7 @@ import { MagicLinkHandler } from './modules/magicLinkHandler/magic-link-handler.
 import { ActivateAccountHandler } from './modules/activateAccountHandler/activate-account-handler.component';
 import { Navbar } from './modules/navbar/navbar.component';
 import { MapContainer } from './modules/map/map.component';
+import './utils/css/custom.css';
 
 const { Header, Content, Footer } = Layout;
 

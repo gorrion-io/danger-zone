@@ -8,6 +8,7 @@ import {
 } from './models/report-comment.schema';
 import { ReportCommentsResolver } from './report-comments.resolver';
 import { ReportCommentsService } from './report-comments.service';
+import { UsersModule } from '../users/users.module';
 
 const services = [ReportCommentsService];
 const resolvers = [ReportCommentsResolver];
@@ -19,6 +20,7 @@ const resolvers = [ReportCommentsResolver];
     ]),
     CommonModule,
     AuthModule,
+    UsersModule,
   ],
   providers: [...services, ...resolvers],
 })

@@ -2,6 +2,7 @@ import {
   buildSchema,
   pre as Pre,
   prop as Property,
+  Ref,
 } from '@typegoose/typegoose';
 import { ObjectId } from 'bson';
 import { Schema } from 'mongoose';
@@ -33,9 +34,9 @@ export class ReportComment {
   @Property({ required: true, maxlength: 500 })
   message: string;
 
-  @Field(() => ObjectIdScalar)
-  @Property({ required: true, ref: User })
-  addedBy: ObjectId;
+  @Field(type => User)
+  @Property({ ref: User })
+  addedBy: Ref<User>;
 
   @Field(() => ObjectIdScalar)
   @Property({ required: true, ref: Report })

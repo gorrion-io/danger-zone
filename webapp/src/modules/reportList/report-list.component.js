@@ -3,7 +3,8 @@ import { Alert, Card, Spin } from 'antd';
 import React from 'react';
 import { GET_ALL_REPORTS } from './report-list.query';
 import { ErrorBox, ErrorMessage } from '../common/error-display';
-
+import { AddComment } from '../addComment/add-comment.component';
+import { CommentList } from '../commentList/comment-list.component';
 
 export const ReportList = () => {
   const { loading, error, data } = useQuery(GET_ALL_REPORTS);
@@ -20,8 +21,16 @@ export const ReportList = () => {
     reports && reports.length ? (
       reports.map((report) => {
         return (
-          <Card key={report._id} style={{ margin: '30px 0' }} type='inner' extra={report.reportedBy && `Reported by ${report.reportedBy.userName}`} title={report.title}>
+          <Card
+            key={report._id}
+            style={{ margin: '30px 0' }}
+            type='inner'
+            extra={report.reportedBy && `Reported by ${report.reportedBy.userName}`}
+            title={report.title}>
             {report.description}
+
+            <CommentList reportId={report._id} />
+            <AddComment reportId={report._id} />
           </Card>
         );
       })
