@@ -9,6 +9,9 @@ export const FIND_ALL_COMMENTS = gql`
       addedBy {
         userName
       }
+      likes
+      dislikes
+      currentUserLikeType
     }
   }
 `;

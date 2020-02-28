@@ -21,6 +21,14 @@ input AddUserInput {
   role: Role
 }
 
+type CommentLike {
+  _id: ObjectId!
+  addedBy: User!
+  lastEditDate: DateTime!
+  commentId: ObjectId!
+  likeType: LikeType!
+}
+
 """
 The javascript `Date` as string. Type represents date and time as the ISO Date string.
 """
@@ -64,6 +72,13 @@ enum GrantType {
   RefreshToken
 }
 
+"""Comment like or dislike"""
+enum LikeType {
+  Like
+  Dislike
+  None
+}
+
 input MagicLinkInput {
   email: String!
 }
@@ -81,6 +96,7 @@ type Mutation {
   editReport(comment: EditReportCommentInput!): ReportComment!
   deleteReport(id: ObjectId!): ObjectId!
   addReportComment(comment: AddReportCommentInput!): ReportComment!
+  updateCommentLike(commentLike: UpdateCommentLikeInput!): GenericResponse!
 }
 
 """Mongo object id scalar type"""
@@ -120,6 +136,9 @@ type ReportComment {
   reportId: ObjectId!
   answeredTo: ObjectId
   isDeleted: Boolean!
+  likes: Float!
+  dislikes: Float!
+  currentUserLikeType: LikeType!
 }
 
 """Available user roles"""
@@ -139,6 +158,11 @@ type Token {
 }
 
 union TokenUnion = Token | ErrorResponse
+
+input UpdateCommentLikeInput {
+  commentId: ObjectId!
+  likeType: LikeType!
+}
 
 type User {
   _id: ObjectId!

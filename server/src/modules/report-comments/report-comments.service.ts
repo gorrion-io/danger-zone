@@ -6,7 +6,10 @@ import { ObjectIdScalar } from '../common/graphql-scalars/object-id.scalar';
 import { AddReportCommentInput } from './models/add-report-comment.input';
 import { EditReportCommentInput } from './models/edit-report-comment.input';
 import { ReportComment } from './models/report-comment.schema';
-
+import { LikeType } from '../comment-like/models/like-type.enum';
+import { SuccessResponse } from '../common/graphql-generic-responses/success-response.model';
+import { ErrorResponse } from '../common/graphql-generic-responses/error-response.model';
+import { ObjectId } from 'bson';
 @Injectable()
 export class ReportCommentsService {
   constructor(
@@ -30,6 +33,8 @@ export class ReportCommentsService {
     Object.assign(comment, dto);
     comment.creationDate = new Date();
     comment.addedBy = user._id;
+    comment.likes = 0;
+    comment.dislikes = 0;
 
     return comment.save();
   }
@@ -54,5 +59,22 @@ export class ReportCommentsService {
     comment.save();
 
     return comment.id;
+  }
+
+  async updateCommentLikes(
+    commentId: ObjectId,
+    likes: number,
+    dislikes: number,
+  ): Promise<SuccessResponse | ErrorResponse> {
+    const comment = await this.commentModel.findById(commentId);
+    if (!comment) {
+      return new ErrorResponse(`Comment with id: "${commentId}" not found.`);
+    }
+
+    comment.likes = likes;
+    comment.dislikes = dislikes;
+
+    await comment.save();
+    return new SuccessResponse('');
   }
 }

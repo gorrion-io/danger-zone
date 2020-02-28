@@ -49,6 +49,14 @@ export class ReportComment {
   @Field()
   @Property({ required: true, default: false })
   isDeleted: boolean;
+
+  @Field()
+  @Property({ required: true })
+  likes: number;
+
+  @Field()
+  @Property({ required: true })
+  dislikes: number;
 }
 
 export const ReportCommentSchema: Schema<typeof ReportComment> = buildSchema(

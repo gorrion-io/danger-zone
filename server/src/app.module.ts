@@ -10,6 +10,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { SendgridModule } from './modules/sendgrid/sendgrid.module';
 import { SendgridOptions } from './modules/sendgrid/models/sendgrid-options.model';
 import { ReportCommentsModule } from './modules/report-comments/report-comments.module';
+import { CommentLikeModule } from './modules/comment-like/comment-like.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { ReportCommentsModule } from './modules/report-comments/report-comments.
     ReportsModule,
     AuthModule,
     ReportCommentsModule,
+    CommentLikeModule,
   ],
   controllers: [AppController],
   providers: [AppService],
