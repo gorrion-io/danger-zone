@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useCallback } from 'react';
 import { useQuery } from '@apollo/react-hooks';
 import { List, AutoSizer, CellMeasurer, CellMeasurerCache } from 'react-virtualized';
 import { Spin } from 'antd';
@@ -23,14 +23,18 @@ const ListContainer = styled.div`
 export const CommentList = (props) => {
   const { loading, error, data } = useQuery(FIND_ALL_COMMENTS, { variables: { id: props.reportId } });
   const comments = data ? data.findAllComments : [];
+  const [listHeight, setListHeight] = useState(1);
 
-  const commentList = ({ index, parent, style }) => (
-    <CellMeasurer key={comments[index]._id} cache={cache} parent={parent} columnIndex={0} rowIndex={index}>
-      <Comment style={style} comment={comments[index]}></Comment>
-    </CellMeasurer>
+  const commentList = useCallback(
+    ({ index, parent, style }) => (
+      <CellMeasurer key={comments[index]._id} cache={cache} parent={parent} columnIndex={0} rowIndex={index}>
+        {() => <Comment style={style} comment={comments[index]}></Comment>}
+      </CellMeasurer>
+    ),
+    [comments],
   );
 
-  const getListHeight = () => {
+  const calcListHeight = () => {
     let height = 0;
     for (let i = 0; i < comments.length; i++) {
       height += cache.getHeight(i, 0);
@@ -40,7 +44,7 @@ export const CommentList = (props) => {
     if (props && props.maxHeight) maxHeight = props.maxHeight;
     else if (props && props.style && props.style.maxHeight) maxHeight = props.style.maxHeight;
 
-    return height - 10 < maxHeight ? height : maxHeight;
+    setListHeight(height - 10 < maxHeight ? height : maxHeight);
   };
 
   if (error)
@@ -52,7 +56,7 @@ export const CommentList = (props) => {
 
   return (
     <Spin spinning={loading}>
-      <ListContainer style={{ height: getListHeight() }}>
+      <ListContainer style={{ height: listHeight }}>
         <AutoSizer>
           {({ height, width }) => (
             <List
@@ -62,6 +66,7 @@ export const CommentList = (props) => {
               rowHeight={cache.rowHeight}
               deferredMeasurementCache={cache}
               rowRenderer={commentList}
+              onRowsRendered={() => calcListHeight()}
             />
           )}
         </AutoSizer>

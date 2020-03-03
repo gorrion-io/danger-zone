@@ -12,6 +12,7 @@ export const FIND_ALL_COMMENTS = gql`
       likes
       dislikes
       currentUserLikeType
+      reportId
     }
   }
 `;
