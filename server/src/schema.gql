@@ -68,7 +68,7 @@ type Mutation {
   sendMagicLink(magicLinkParam: MagicLinkInput!): GenericResponse!
   addReport(report: AddReportInput!): Report!
   editReport(report: EditReportInput!): Report!
-  deleteReport(id: ObjectId!): ObjectId!
+  deleteReport(id: ObjectId!): GenericResponse!
 }
 
 """Mongo object id scalar type"""
