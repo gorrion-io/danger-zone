@@ -1,4 +1,5 @@
-import React, { useCallback } from 'react';
+/* eslint-disable react/display-name */
+import React, { useState, useCallback, useEffect } from 'react';
 import { Tooltip } from 'antd';
 import { useMutation } from '@apollo/react-hooks';
 import { DislikeOutlined, LikeOutlined, DislikeFilled, LikeFilled } from '@ant-design/icons';
@@ -6,7 +7,9 @@ import styled from 'styled-components';
 import moment from 'moment';
 import { UPDATE_COMMENT_LIKE } from './comment.mutations';
 import { LIKE, DISLIKE, NONE } from '../../utils/constants/like-type.const';
-import { FIND_ALL_COMMENTS } from '../commentList/comment-list.query';
+import { ERROR_RESPONSE } from '../../utils/constants/respons-types.const';
+import { openErrorNotification } from '../../utils/notifications';
+import { CommentList } from '../commentList/comment-list.component';
 
 const HeaderSection = styled.div`
   font-size: 0.85em;
@@ -54,24 +57,49 @@ const ActionButton = styled.span`
   user-select: none;
 `;
 
-export const Comment = (props) => {
-  const [updateCommentLike] = useMutation(UPDATE_COMMENT_LIKE, {
-    refetchQueries: () => [
-      {
-        query: FIND_ALL_COMMENTS,
-        variables: { id: props.comment.reportId },
-      },
-    ],
-  });
+const CommentListContainer = styled.div`
+  padding-left: 30px;
+  padding-top: 8px;
+  padding-right: 10px;
+`;
+
+export const Comment = React.memo((props) => {
+  const [updateCommentLike] = useMutation(UPDATE_COMMENT_LIKE);
+  const [showReply, setShowReply] = useState(props.showReplyForm);
+  const [showAnswers, setShowAnswers] = useState(props.showAnswers);
+
+  useEffect(() => {
+    props.onShowReplyForm(showReply, props.comment._id);
+    props.measure();
+  }, [showReply]);
+
+  useEffect(() => {
+    props.onShowAnswers(showAnswers, props.comment._id);
+    props.measure();
+  }, [showAnswers]);
 
   const updateLikeType = useCallback(async (nextLikeType) => {
-    await updateCommentLike({
+    const { data } = await updateCommentLike({
       variables: {
         commentId: props.comment._id,
         likeType: nextLikeType,
       },
     });
+
+    if (data.updateCommentLike.__typename === ERROR_RESPONSE) {
+      openErrorNotification(data.updateCommentLike.message);
+    } else if (typeof props.updateComment === 'function') {
+      props.updateComment(data.updateCommentLike);
+    }
   }, []);
+
+  const onReply = useCallback(() => {
+    setShowReply(!showReply);
+  }, [showReply]);
+
+  const onShowAnswers = useCallback(() => {
+    setShowAnswers(!showAnswers);
+  }, [showAnswers]);
 
   return (
     <CommentContainer style={props.style}>
@@ -104,11 +132,27 @@ export const Comment = (props) => {
           <LikeCounter>{props.comment.dislikes}</LikeCounter>
         </HeaderSection>
         <MessageSection>{props.comment.message}</MessageSection>
-        <div>
-          <ActionButton>Reply</ActionButton>
-          <ActionButton>View answers</ActionButton>
-        </div>
+
+        {!props.isNested && (
+          <div>
+            <ActionButton onClick={onReply}>Reply</ActionButton>
+            <ActionButton onClick={onShowAnswers}>View answers</ActionButton>
+          </div>
+        )}
+
+        {(showAnswers || showReply) && (
+          <CommentListContainer>
+            <CommentList
+              reportId={props.comment.reportId}
+              parentId={props.comment._id}
+              heightChanged={props.measure}
+              style={{ maxHeight: 200 }}
+              isNested={true}
+              showReplyForm={showReply}
+            />
+          </CommentListContainer>
+        )}
       </div>
     </CommentContainer>
   );
-};
+});

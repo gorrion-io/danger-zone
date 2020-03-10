@@ -10,6 +10,7 @@ import { SuccessResponse } from '../common/graphql-generic-responses/success-res
 import { ErrorResponse } from '../common/graphql-generic-responses/error-response.model';
 import { ObjectId } from 'bson';
 import { LikeType } from './models/like-type.enum';
+import { ReportComment } from '../report-comments/models/report-comment.schema';
 
 @Injectable()
 export class CommentLikeService {
@@ -27,7 +28,7 @@ export class CommentLikeService {
   async updateCommentLike(
     dto: UpdateCommentLikeInput,
     user: ICurrentUser,
-  ): Promise<SuccessResponse | ErrorResponse> {
+  ): Promise<ReportComment | ErrorResponse> {
     let commentLike = await this.commentLike.findOne({
       commentId: dto.commentId,
       addedBy: user._id,

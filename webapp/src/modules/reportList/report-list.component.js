@@ -29,7 +29,7 @@ export const ReportList = () => {
             title={report.title}>
             {report.description}
 
-            <CommentList reportId={report._id} style={{ maxHeight: 250 }} />
+            <CommentList reportId={report._id} style={{ maxHeight: 500 }} />
             <AddComment reportId={report._id} />
           </Card>
         );

@@ -58,6 +58,11 @@ type ErrorResponse {
   message: String!
 }
 
+input FindAllCommentsInput {
+  reportId: ObjectId!
+  answeredTo: ObjectId
+}
+
 union GenericResponse = SuccessResponse | ErrorResponse
 
 input GetTokenInput {
@@ -96,7 +101,7 @@ type Mutation {
   editReport(comment: EditReportCommentInput!): ReportComment!
   deleteReport(id: ObjectId!): ObjectId!
   addReportComment(comment: AddReportCommentInput!): ReportComment!
-  updateCommentLike(commentLike: UpdateCommentLikeInput!): GenericResponse!
+  updateCommentLike(commentLike: UpdateCommentLikeInput!): ReportCommentUnion!
 }
 
 """Mongo object id scalar type"""
@@ -106,7 +111,7 @@ type Query {
   findAllUsers: [User!]!
   findAllReports: [Report!]!
   findReport(id: ObjectId!): Report!
-  findAllComments(id: ObjectId!): [ReportComment!]!
+  findAllComments(findAllComments: FindAllCommentsInput!): [ReportComment!]!
   findComment(id: ObjectId!): ReportComment!
 }
 
@@ -140,6 +145,8 @@ type ReportComment {
   dislikes: Float!
   currentUserLikeType: LikeType!
 }
+
+union ReportCommentUnion = ErrorResponse | ReportComment
 
 """Available user roles"""
 enum Role {

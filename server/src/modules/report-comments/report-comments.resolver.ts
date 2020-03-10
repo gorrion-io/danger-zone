@@ -20,6 +20,7 @@ import { UsersService } from '../users/users.service';
 import { ObjectId } from 'bson';
 import { LikeType } from '../comment-like/models/like-type.enum';
 import { CommentLikeService } from '../comment-like/comment-like.service';
+import { FindAllCommentsInput } from './models/find-all-comments.input';
 
 @UseGuards(AuthGuard)
 @Resolver(() => ReportComment)
@@ -48,9 +49,9 @@ export class ReportCommentsResolver {
 
   @Query(() => [ReportComment])
   async findAllComments(
-    @Args('id') reportId: ObjectIdScalar,
+    @Args('findAllComments') req: FindAllCommentsInput,
   ): Promise<ReportComment[]> {
-    return this.reportCommentsService.findAll(reportId);
+    return this.reportCommentsService.findAll(req);
   }
 
   @Query(() => ReportComment)

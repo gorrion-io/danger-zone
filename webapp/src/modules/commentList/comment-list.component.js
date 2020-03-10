@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { useQuery } from '@apollo/react-hooks';
 import { List, AutoSizer, CellMeasurer, CellMeasurerCache } from 'react-virtualized';
 import { Spin } from 'antd';
@@ -6,6 +6,7 @@ import { FIND_ALL_COMMENTS } from './comment-list.query';
 import { Comment } from '../comment/comment.component';
 import styled from 'styled-components';
 import { ErrorBox, ErrorMessage } from '../common/error-display';
+import { AddComment } from '../addComment/add-comment.component';
 
 const cache = new CellMeasurerCache({
   fixedWidth: true,
@@ -21,18 +22,78 @@ const ListContainer = styled.div`
 `;
 
 export const CommentList = (props) => {
-  const { loading, error, data } = useQuery(FIND_ALL_COMMENTS, { variables: { id: props.reportId } });
+  const { loading, error, data, client } = useQuery(FIND_ALL_COMMENTS, {
+    variables: {
+      id: props.reportId,
+      answeredTo: props.parentId,
+    },
+  });
   const comments = data ? data.findAllComments : [];
   const [listHeight, setListHeight] = useState(1);
+  const [showReply, setShowReply] = useState({});
+  const [showAnswers, setShowAnswers] = useState({});
+
+  const updateComment = useCallback(
+    (comment) => {
+      const index = comments.findIndex((c) => c._id === comment._id);
+      Object.assign(comments[index], comment);
+
+      client.writeQuery({
+        query: FIND_ALL_COMMENTS,
+        variables: {
+          id: props.reportId,
+          answeredTo: props.parentId,
+        },
+        data: { findAllComments: comments },
+      });
+    },
+    [comments],
+  );
+
+  const onShowReply = useCallback(
+    (show, id) => {
+      showReply[id] = show;
+      setShowReply(showReply);
+    },
+    [showReply],
+  );
+
+  const onShowAnswers = useCallback(
+    (show, id) => {
+      showAnswers[id] = show;
+      setShowAnswers(showAnswers);
+    },
+    [showAnswers],
+  );
 
   const commentList = useCallback(
     ({ index, parent, style }) => (
       <CellMeasurer key={comments[index]._id} cache={cache} parent={parent} columnIndex={0} rowIndex={index}>
-        {() => <Comment style={style} comment={comments[index]}></Comment>}
+        {({ measure }) => {
+          return (
+            <Comment
+              style={style}
+              comment={comments[index]}
+              updateComment={updateComment}
+              onShowReplyForm={(show) => onShowReply(show, comments[index]._id)}
+              showReplyForm={!!showReply[comments[index]._id]}
+              onShowAnswers={(show) => onShowAnswers(show, comments[index]._id)}
+              showAnswers={!!showAnswers[comments[index]._id]}
+              measure={measure}
+              isNested={props.isNested}
+            />
+          );
+        }}
       </CellMeasurer>
     ),
-    [comments],
+    [comments, showReply, showAnswers],
   );
+
+  useEffect(() => {
+    if (typeof props.heightChanged === 'function') {
+      props.heightChanged();
+    }
+  }, [listHeight]);
 
   const calcListHeight = () => {
     let height = 0;
@@ -71,6 +132,7 @@ export const CommentList = (props) => {
           )}
         </AutoSizer>
       </ListContainer>
+      {props.showReplyForm && <AddComment reportId={props.reportId} answeredTo={props.parentId} />}
     </Spin>
   );
 };

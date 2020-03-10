@@ -22,7 +22,10 @@ export const AddComment = (props) => {
     refetchQueries: () => [
       {
         query: FIND_ALL_COMMENTS,
-        variables: { id: props.reportId },
+        variables: {
+          id: props.reportId,
+          answeredTo: props.answeredTo,
+        },
       },
     ],
   });
@@ -35,7 +38,7 @@ export const AddComment = (props) => {
       variables: {
         message: comment,
         reportId: props.reportId,
-        answeredTo: null,
+        answeredTo: props.answeredTo,
       },
     });
 

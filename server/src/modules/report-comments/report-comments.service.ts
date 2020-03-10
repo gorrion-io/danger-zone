@@ -6,10 +6,9 @@ import { ObjectIdScalar } from '../common/graphql-scalars/object-id.scalar';
 import { AddReportCommentInput } from './models/add-report-comment.input';
 import { EditReportCommentInput } from './models/edit-report-comment.input';
 import { ReportComment } from './models/report-comment.schema';
-import { LikeType } from '../comment-like/models/like-type.enum';
-import { SuccessResponse } from '../common/graphql-generic-responses/success-response.model';
 import { ErrorResponse } from '../common/graphql-generic-responses/error-response.model';
 import { ObjectId } from 'bson';
+import { FindAllCommentsInput } from './models/find-all-comments.input';
 @Injectable()
 export class ReportCommentsService {
   constructor(
@@ -17,8 +16,10 @@ export class ReportCommentsService {
     private readonly commentModel: ReturnModelType<typeof ReportComment>,
   ) {}
 
-  async findAll(reportId: ObjectIdScalar): Promise<ReportComment[]> {
-    return this.commentModel.find({ reportId }).exec();
+  async findAll(request: FindAllCommentsInput): Promise<ReportComment[]> {
+    return this.commentModel
+      .find({ reportId: request.reportId, answeredTo: request.answeredTo })
+      .exec();
   }
 
   async findOne(id: ObjectIdScalar): Promise<ReportComment> {
@@ -65,7 +66,7 @@ export class ReportCommentsService {
     commentId: ObjectId,
     likes: number,
     dislikes: number,
-  ): Promise<SuccessResponse | ErrorResponse> {
+  ): Promise<ReportComment | ErrorResponse> {
     const comment = await this.commentModel.findById(commentId);
     if (!comment) {
       return new ErrorResponse(`Comment with id: "${commentId}" not found.`);
@@ -74,7 +75,7 @@ export class ReportCommentsService {
     comment.likes = likes;
     comment.dislikes = dislikes;
 
-    await comment.save();
-    return new SuccessResponse('');
+    const c = await comment.save();
+    return Object.setPrototypeOf(c.toObject(), new ReportComment());
   }
 }
