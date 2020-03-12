@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { Input, Button } from 'antd';
 import { useMutation } from '@apollo/react-hooks';
 import { ADD_REPORT_COMMENT } from './add-comment.mutation';
@@ -10,26 +10,63 @@ const FormContainer = styled.div`
   flex-direction: column;
 `;
 
-const AddButton = styled(Button)`
+const ButtonContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+`;
+
+const CustomButton = styled(Button)`
   && {
     margin-top: 8px;
+    margin-right: 8px;
     width: 120px;
   }
 `;
 
-export const AddComment = (props) => {
+const getReplyUserName = (replyInfo) => {
+  return replyInfo && replyInfo.userName ? `@${replyInfo.userName}: ` : '';
+};
+
+export const AddComment = ({ reportId, replyInfo, cancelReply }) => {
   const [addComment] = useMutation(ADD_REPORT_COMMENT, {
     refetchQueries: () => [
       {
         query: FIND_ALL_COMMENTS,
         variables: {
-          id: props.reportId,
-          answeredTo: props.answeredTo,
+          id: reportId,
+          answeredTo: replyInfo.answeredTo,
         },
       },
     ],
   });
   const [comment, setComment] = useState('');
+  const [isReply, setIsReply] = useState(false);
+
+  useEffect(() => {
+    const isReply = !!(replyInfo && replyInfo.userName && replyInfo.answeredTo);
+    setIsReply(isReply);
+    setComment(isReply ? getReplyUserName(replyInfo) : '');
+  }, [replyInfo]);
+
+  const onCancelReply = useCallback(() => {
+    cancelReply();
+  }, []);
+
+  const onCommentChanged = useCallback(
+    ({ target }) => {
+      let val = target.value;
+      if (isReply) {
+        const replyUserName = getReplyUserName(replyInfo);
+        const unLength = replyUserName.length;
+        if (val.length < unLength || val.substr(0, unLength) !== replyUserName) {
+          val = comment;
+        }
+      }
+
+      setComment(val);
+    },
+    [isReply, replyInfo, comment],
+  );
 
   const onAddComment = useCallback(async () => {
     if (!comment) return;
@@ -37,20 +74,27 @@ export const AddComment = (props) => {
     await addComment({
       variables: {
         message: comment,
-        reportId: props.reportId,
-        answeredTo: props.answeredTo,
+        reportId: reportId,
+        answeredTo: replyInfo.answeredTo,
       },
     });
 
-    setComment('');
+    cancelReply();
   }, [comment]);
 
   return (
     <FormContainer>
-      <Input onChange={(e) => setComment(e.target.value)} value={comment} placeholder='Write a comment' name='comment' />
-      <AddButton onClick={onAddComment} type='primary'>
-        Add comment
-      </AddButton>
+      <Input onChange={onCommentChanged} value={comment} placeholder='Write a comment' name='comment' />
+      <ButtonContainer>
+        <CustomButton onClick={onAddComment} type='primary'>
+          Add comment
+        </CustomButton>
+        {isReply && (
+          <CustomButton onClick={onCancelReply} type='danger'>
+            Cancel
+          </CustomButton>
+        )}
+      </ButtonContainer>
     </FormContainer>
   );
 };

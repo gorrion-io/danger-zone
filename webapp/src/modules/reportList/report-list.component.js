@@ -3,8 +3,8 @@ import { Alert, Card, Spin } from 'antd';
 import React from 'react';
 import { GET_ALL_REPORTS } from './report-list.query';
 import { ErrorBox, ErrorMessage } from '../common/error-display';
-import { AddComment } from '../addComment/add-comment.component';
 import { CommentList } from '../commentList/comment-list.component';
+import CommentContextProvider from '../../contexts/comment.context';
 
 export const ReportList = () => {
   const { loading, error, data } = useQuery(GET_ALL_REPORTS);
@@ -29,8 +29,9 @@ export const ReportList = () => {
             title={report.title}>
             {report.description}
 
-            <CommentList reportId={report._id} style={{ maxHeight: 500 }} />
-            <AddComment reportId={report._id} />
+            <CommentContextProvider>
+              <CommentList reportId={report._id} />
+            </CommentContextProvider>
           </Card>
         );
       })
