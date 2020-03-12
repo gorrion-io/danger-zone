@@ -54,6 +54,10 @@ export const Comment = ({ comment, updateComment, style, isNested, parentId }) =
   const [showAnswers, setShowAnswers] = useState(false);
 
   const onReply = useCallback(() => {
+    if (!isNested) {
+      setShowAnswers(true);
+    }
+
     const answeredTo = isNested ? parentId : comment._id;
     commentContext.reply({
       answeredTo,
