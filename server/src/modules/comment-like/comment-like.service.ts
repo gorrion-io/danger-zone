@@ -21,10 +21,6 @@ export class CommentLikeService {
     private readonly reportCommentsService: ReportCommentsService,
   ) {}
 
-  async findAllLikes(commentId: ObjectIdScalar): Promise<CommentLike[]> {
-    return this.commentLike.find({ commentId });
-  }
-
   async updateCommentLike(
     dto: UpdateCommentLikeInput,
     user: ICurrentUser,

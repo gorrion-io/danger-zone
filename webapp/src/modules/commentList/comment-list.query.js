@@ -1,8 +1,8 @@
 import gql from 'graphql-tag';
 
 export const FIND_ALL_COMMENTS = gql`
-  query findAllComments($id: ObjectId!, $answeredTo: ObjectId) {
-    findAllComments(findAllComments: { reportId: $id, answeredTo: $answeredTo }) {
+  query findAllComments($reportId: ObjectId!, $answeredTo: ObjectId, $isNested: Boolean!) {
+    findAllComments(findAllComments: { reportId: $reportId, answeredTo: $answeredTo }) {
       _id
       message
       creationDate
@@ -13,6 +13,7 @@ export const FIND_ALL_COMMENTS = gql`
       dislikes
       currentUserLikeType
       reportId
+      answersCount @skip(if: $isNested)
     }
   }
 `;

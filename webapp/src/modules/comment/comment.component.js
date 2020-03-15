@@ -49,7 +49,7 @@ const CommentListContainer = styled.div`
   padding-right: 10px;
 `;
 
-export const Comment = ({ comment, updateComment, style, isNested, parentId }) => {
+export const Comment = ({ comment, style, isNested, parentId }) => {
   const commentContext = useContext(CommentContext);
   const [showAnswers, setShowAnswers] = useState(false);
 
@@ -79,12 +79,12 @@ export const Comment = ({ comment, updateComment, style, isNested, parentId }) =
             <span>{moment(comment.creationDate).fromNow()}</span>
           </DateTooltip>
 
-          <LikeButtons comment={comment} updateComment={updateComment} />
+          <LikeButtons comment={comment} />
         </HeaderSection>
         <MessageSection>{comment.message}</MessageSection>
 
         <ActionButton onClick={onReply}>Reply</ActionButton>
-        {!isNested && <ActionButton onClick={onShowAnswers}>View answers</ActionButton>}
+        {!isNested && comment.answersCount > 0 && <ActionButton onClick={onShowAnswers}>View answers ({comment.answersCount})</ActionButton>}
 
         {showAnswers && !isNested && (
           <CommentListContainer>

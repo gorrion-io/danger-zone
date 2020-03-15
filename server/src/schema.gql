@@ -29,6 +29,11 @@ type CommentLike {
   likeType: LikeType!
 }
 
+input CommentSubInput {
+  reportId: ObjectId!
+  answeredTo: ObjectId
+}
+
 """
 The javascript `Date` as string. Type represents date and time as the ISO Date string.
 """
@@ -144,6 +149,7 @@ type ReportComment {
   likes: Float!
   dislikes: Float!
   currentUserLikeType: LikeType!
+  answersCount: Float!
 }
 
 union ReportCommentUnion = ErrorResponse | ReportComment
@@ -153,6 +159,11 @@ enum Role {
   Admin
   Maintainer
   StandardUser
+}
+
+type Subscription {
+  commentAdded(ids: CommentSubInput!): ReportComment!
+  commentUpdate(ids: CommentSubInput!): ReportComment!
 }
 
 type SuccessResponse {

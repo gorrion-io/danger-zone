@@ -18,26 +18,21 @@ const LikeCounter = styled.span`
   margin-left: 8px;
 `;
 
-export const LikeButtons = ({ comment, updateComment }) => {
+export const LikeButtons = ({ comment }) => {
   const [updateCommentLike] = useMutation(UPDATE_COMMENT_LIKE);
 
-  const updateLikeType = useCallback(
-    async (nextLikeType) => {
-      const { data } = await updateCommentLike({
-        variables: {
-          commentId: comment._id,
-          likeType: nextLikeType,
-        },
-      });
+  const updateLikeType = useCallback(async (nextLikeType) => {
+    const { data } = await updateCommentLike({
+      variables: {
+        commentId: comment._id,
+        likeType: nextLikeType,
+      },
+    });
 
-      if (data.updateCommentLike.__typename === ERROR_RESPONSE) {
-        openErrorNotification(data.updateCommentLike.message);
-      } else if (typeof updateComment === 'function') {
-        updateComment(data.updateCommentLike);
-      }
-    },
-    [updateComment],
-  );
+    if (data.updateCommentLike.__typename === ERROR_RESPONSE) {
+      openErrorNotification(data.updateCommentLike.message);
+    }
+  }, []);
 
   return (
     <div>

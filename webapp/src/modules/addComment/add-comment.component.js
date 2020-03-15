@@ -2,7 +2,6 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { Input, Button } from 'antd';
 import { useMutation } from '@apollo/react-hooks';
 import { ADD_REPORT_COMMENT } from './add-comment.mutation';
-import { FIND_ALL_COMMENTS } from '../commentList/comment-list.query';
 import styled from 'styled-components';
 
 const FormContainer = styled.div`
@@ -28,17 +27,7 @@ const getReplyUserName = (replyInfo) => {
 };
 
 export const AddComment = ({ reportId, replyInfo, cancelReply }) => {
-  const [addComment] = useMutation(ADD_REPORT_COMMENT, {
-    refetchQueries: () => [
-      {
-        query: FIND_ALL_COMMENTS,
-        variables: {
-          id: reportId,
-          answeredTo: replyInfo.answeredTo,
-        },
-      },
-    ],
-  });
+  const [addComment] = useMutation(ADD_REPORT_COMMENT);
   const [comment, setComment] = useState('');
   const [isReply, setIsReply] = useState(false);
 

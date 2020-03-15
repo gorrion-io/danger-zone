@@ -1,5 +1,13 @@
 import { Inject, UseGuards } from '@nestjs/common';
-import { Mutation, Args, Resolver, Context } from '@nestjs/graphql';
+import {
+  Mutation,
+  Args,
+  Resolver,
+  Context,
+  Subscription,
+} from '@nestjs/graphql';
+import { PubSub } from 'apollo-server-express';
+import { ObjectId } from 'bson';
 import { CommentLikeService } from './comment-like.service';
 import { UpdateCommentLikeInput } from './models/update-comment-like.input';
 import { ICurrentUser } from '../auth/interfaces/current-user.interface';
@@ -14,6 +22,8 @@ export class CommentLikeResolver {
   constructor(
     @Inject(CommentLikeService)
     private readonly commentLikeService: CommentLikeService,
+    @Inject('PUB_SUB')
+    private readonly pubSub: PubSub,
   ) {}
 
   @Mutation(() => ReportCommentUnion)
@@ -21,6 +31,14 @@ export class CommentLikeResolver {
     @Args('commentLike') commentLike: UpdateCommentLikeInput,
     @Context('user') user: ICurrentUser,
   ): Promise<ReportComment | ErrorResponse> {
-    return this.commentLikeService.updateCommentLike(commentLike, user);
+    const comment = await this.commentLikeService.updateCommentLike(
+      commentLike,
+      user,
+    );
+    if (comment instanceof ReportComment) {
+      this.pubSub.publish('commentUpdate', { commentUpdate: comment });
+    }
+
+    return comment;
   }
 }

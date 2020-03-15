@@ -22,7 +22,7 @@ export class ReportCommentsService {
       .exec();
   }
 
-  async findOne(id: ObjectIdScalar): Promise<ReportComment> {
+  async findOne(id: ObjectIdScalar | ObjectId): Promise<ReportComment> {
     return this.commentModel.findById(id);
   }
 
@@ -77,5 +77,9 @@ export class ReportCommentsService {
 
     const c = await comment.save();
     return Object.setPrototypeOf(c.toObject(), new ReportComment());
+  }
+
+  async getCommentAnswersCount(commentId: ObjectId) {
+    return this.commentModel.find({ answeredTo: commentId }).count();
   }
 }

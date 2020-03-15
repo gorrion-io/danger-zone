@@ -8,6 +8,7 @@
     "antd": "^3.26.3",
     "apollo-boost": "^0.4.7",
     "apollo-link-context": "^1.0.19",
+    "apollo-link-ws": "^1.0.19",
     "formik": "^2.1.4",
     "graphql": "^14.5.8",
     "jwt-decode": "^2.2.0",
@@ -18,7 +19,8 @@
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.4.0",
     "react-virtualized": "^9.21.2",
-    "styled-components": "^5.0.0"
+    "styled-components": "^5.0.0",
+    "subscriptions-transport-ws": "^0.9.16"
   },
   "scripts": {
     "start": "react-scripts start",

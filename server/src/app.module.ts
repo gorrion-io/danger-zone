@@ -11,15 +11,20 @@ import { SendgridModule } from './modules/sendgrid/sendgrid.module';
 import { SendgridOptions } from './modules/sendgrid/models/sendgrid-options.model';
 import { ReportCommentsModule } from './modules/report-comments/report-comments.module';
 import { CommentLikeModule } from './modules/comment-like/comment-like.module';
+import { PubSubModule } from './modules/pub-sub/pub-sub.module';
 
 @Module({
   imports: [
     GraphQLModule.forRoot({
       autoSchemaFile: join('src', 'schema.gql'),
-      context: ({ req }) => ({ headers: req.headers }),
+      context: ({ req, connection }) => ({
+        headers: connection ? connection.context : req.headers,
+      }),
+      installSubscriptionHandlers: true,
     }),
     MongooseModule.forRoot(`mongodb://mongo/wpierdol`),
     SendgridModule.forRoot(new SendgridOptions(process.env.SENDGRID_API_KEY)),
+    PubSubModule,
     UsersModule,
     ReportsModule,
     AuthModule,
