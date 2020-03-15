@@ -32,8 +32,8 @@ const commentSubFilter = (payloadComment, variables) => {
   const vAnsweredeTo: ObjectId = variables.ids.answeredTo;
 
   return (
-    pReportId.equals(vReportId),
-    pAnsweredeTo === vAnsweredeTo || pAnsweredeTo.equals(vAnsweredeTo)
+    pReportId.equals(vReportId) &&
+    (pAnsweredeTo === vAnsweredeTo || pAnsweredeTo.equals(vAnsweredeTo))
   );
 };
 
