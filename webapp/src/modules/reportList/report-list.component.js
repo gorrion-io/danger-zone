@@ -6,6 +6,8 @@ import { ERROR_RESPONSE } from '../../utils/constants/respons-types.const';
 import { USER_ROLE } from '../../utils/enums/user-role.enum';
 import { openErrorNotification } from '../../utils/notifications';
 import { ErrorBox, ErrorMessage } from '../common/error-display';
+import { CommentList } from '../commentList/comment-list.component';
+import CommentContextProvider from '../../contexts/comment.context';
 import { DELETE_REPORT } from './report-list.mutations';
 import { GET_ALL_REPORTS } from './report-list.query';
 
@@ -47,6 +49,10 @@ const AdminCard = ({ isAdmin, report, refetch }) => {
       title={report.title}
       {...adminProps}>
       {report.description}
+
+      <CommentContextProvider>
+        <CommentList reportId={report._id} />
+      </CommentContextProvider>
     </Card>
   );
 };
@@ -55,7 +61,7 @@ export const ReportList = () => {
   const { loading, error, data, refetch } = useQuery(GET_ALL_REPORTS);
   const reports = data ? data.findAllReports : null;
   const authContext = useContext(AuthContext);
-  const isAdmin = authContext.payload.role == USER_ROLE.Admin;
+  const isAdmin = authContext.payload.role === USER_ROLE.Admin;
 
   if (error)
     return (

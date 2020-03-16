@@ -3,6 +3,12 @@
 # !!!   DO NOT MODIFY THIS FILE BY YOURSELF   !!!
 # -----------------------------------------------
 
+input AddReportCommentInput {
+  message: String!
+  reportId: ObjectId!
+  answeredTo: ObjectId
+}
+
 input AddReportInput {
   title: String!
   description: String!
@@ -15,10 +21,28 @@ input AddUserInput {
   role: Role
 }
 
+type CommentLike {
+  _id: ObjectId!
+  addedBy: User!
+  lastEditDate: DateTime!
+  commentId: ObjectId!
+  likeType: LikeType!
+}
+
+input CommentSubInput {
+  reportId: ObjectId!
+  answeredTo: ObjectId
+}
+
 """
 The javascript `Date` as string. Type represents date and time as the ISO Date string.
 """
 scalar DateTime
+
+input EditReportCommentInput {
+  _id: ObjectId!
+  message: String!
+}
 
 input EditReportInput {
   _id: ObjectId!
@@ -39,6 +63,11 @@ type ErrorResponse {
   message: String!
 }
 
+input FindAllCommentsInput {
+  reportId: ObjectId!
+  answeredTo: ObjectId
+}
+
 union GenericResponse = SuccessResponse | ErrorResponse
 
 input GetTokenInput {
@@ -51,6 +80,13 @@ input GetTokenInput {
 enum GrantType {
   AccessToken
   RefreshToken
+}
+
+"""Comment like or dislike"""
+enum LikeType {
+  Like
+  Dislike
+  None
 }
 
 input MagicLinkInput {
@@ -67,8 +103,10 @@ type Mutation {
   loginByMagicLink(magicLinkId: String!): TokenUnion!
   sendMagicLink(magicLinkParam: MagicLinkInput!): GenericResponse!
   addReport(report: AddReportInput!): Report!
-  editReport(report: EditReportInput!): Report!
+  editReport(comment: EditReportCommentInput!): ReportComment!
   deleteReport(id: ObjectId!): GenericResponse!
+  addReportComment(comment: AddReportCommentInput!): ReportComment!
+  updateCommentLike(commentLike: UpdateCommentLikeInput!): ReportCommentUnion!
 }
 
 """Mongo object id scalar type"""
@@ -78,6 +116,8 @@ type Query {
   findAllUsers: [User!]!
   findAllReports: [Report!]!
   findReport(id: ObjectId!): Report!
+  findAllComments(findAllComments: FindAllCommentsInput!): [ReportComment!]!
+  findComment(id: ObjectId!): ReportComment!
 }
 
 input RegisterUserInput {
@@ -97,11 +137,33 @@ type Report {
   longitude: Float!
 }
 
+type ReportComment {
+  _id: ObjectId!
+  creationDate: DateTime!
+  lastEditDate: DateTime
+  message: String!
+  addedBy: User!
+  reportId: ObjectId!
+  answeredTo: ObjectId
+  isDeleted: Boolean!
+  likes: Float!
+  dislikes: Float!
+  currentUserLikeType: LikeType!
+  answersCount: Float!
+}
+
+union ReportCommentUnion = ErrorResponse | ReportComment
+
 """Available user roles"""
 enum Role {
   Admin
   Maintainer
   StandardUser
+}
+
+type Subscription {
+  commentAdded(ids: CommentSubInput!): ReportComment!
+  commentUpdate(ids: CommentSubInput!): ReportComment!
 }
 
 type SuccessResponse {
@@ -114,6 +176,11 @@ type Token {
 }
 
 union TokenUnion = Token | ErrorResponse
+
+input UpdateCommentLikeInput {
+  commentId: ObjectId!
+  likeType: LikeType!
+}
 
 type User {
   _id: ObjectId!

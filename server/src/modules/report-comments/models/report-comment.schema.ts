@@ -2,6 +2,7 @@ import {
   buildSchema,
   pre as Pre,
   prop as Property,
+  Ref,
 } from '@typegoose/typegoose';
 import { ObjectId } from 'bson';
 import { Schema } from 'mongoose';
@@ -25,17 +26,17 @@ export class ReportComment {
   @Property({ required: true })
   creationDate: Date;
 
-  @Field()
-  @Property({ required: true })
-  lastEditDate: Date;
+  @Field({ nullable: true })
+  @Property({ required: false })
+  lastEditDate?: Date;
 
   @Field()
   @Property({ required: true, maxlength: 500 })
   message: string;
 
-  @Field(() => ObjectIdScalar)
-  @Property({ required: true, ref: User })
-  addedBy: ObjectId;
+  @Field(type => User)
+  @Property({ ref: User })
+  addedBy: Ref<User>;
 
   @Field(() => ObjectIdScalar)
   @Property({ required: true, ref: Report })
@@ -48,6 +49,14 @@ export class ReportComment {
   @Field()
   @Property({ required: true, default: false })
   isDeleted: boolean;
+
+  @Field()
+  @Property({ required: true })
+  likes: number;
+
+  @Field()
+  @Property({ required: true })
+  dislikes: number;
 }
 
 export const ReportCommentSchema: Schema<typeof ReportComment> = buildSchema(

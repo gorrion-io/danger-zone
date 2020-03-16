@@ -1,7 +1,6 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { SendgridOptions } from './models/sendgrid-options.model';
-import * as sgMail from '@sendgrid/mail';
-import { MailData } from '@sendgrid/helpers/classes/mail';
+import sgMail from '@sendgrid/mail';
 import { SendgridMessage } from './models/sendgrid-message.model';
 import { SuccessResponse } from '../common/graphql-generic-responses/success-response.model';
 import { ErrorResponse } from '../common/graphql-generic-responses/error-response.model';
@@ -29,9 +28,9 @@ export class SendgridService {
       };
 
       if (Array.isArray(message.to)) {
-        const messages: MailData[] = message.to.map(t => {
+        const messages = message.to.map(t => {
           const { to, ...msg } = message;
-          return { to: t, ...msg };
+          return { to: t, ...msg, text: msg.text };
         });
 
         sgMail.send(messages, true, (err, result) =>

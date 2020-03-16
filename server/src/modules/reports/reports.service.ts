@@ -46,15 +46,14 @@ export class ReportsService {
 
   async edit(dto: EditReportInput, user: ICurrentUser): Promise<Report> {
     const report = await this.reportModel.findById(dto._id);
-    if (
-      !report ||
-      !(
-        (report.reportedBy instanceof ObjectId &&
-          report.reportedBy.equals(user._id)) ||
-        (report.reportedBy instanceof User &&
-          report.reportedBy._id.equals(user._id))
-      )
-    ) {
+
+    const isReportedByCurrentUser =
+      (report.reportedBy instanceof ObjectId &&
+        report.reportedBy.equals(user._id)) ||
+      (report.reportedBy instanceof User &&
+        report.reportedBy._id.equals(user._id));
+
+    if (!report || !isReportedByCurrentUser) {
       throw new Error(`Report with id: "${dto._id}" not found.`);
     }
     Object.assign(report, dto);
