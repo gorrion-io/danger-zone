@@ -28,12 +28,12 @@ import { CommentSubInput } from './models/comment-sub.input';
 const commentSubFilter = (payloadComment, variables) => {
   const pReportId: ObjectId = payloadComment.reportId;
   const vReportId: ObjectId = variables.ids.reportId;
-  const pAnsweredeTo: ObjectId = payloadComment.answeredTo;
-  const vAnsweredeTo: ObjectId = variables.ids.answeredTo;
+  const pAnsweredTo: ObjectId = payloadComment.answeredTo;
+  const vAnsweredTo: ObjectId = variables.ids.answeredTo;
 
   return (
     pReportId.equals(vReportId) &&
-    (pAnsweredeTo === vAnsweredeTo || pAnsweredeTo.equals(vAnsweredeTo))
+    (pAnsweredTo === vAnsweredTo || pAnsweredTo.equals(vAnsweredTo))
   );
 };
 
