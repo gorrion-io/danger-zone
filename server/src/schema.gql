@@ -104,7 +104,7 @@ type Mutation {
   sendMagicLink(magicLinkParam: MagicLinkInput!): GenericResponse!
   addReport(report: AddReportInput!): Report!
   editReport(comment: EditReportCommentInput!): ReportComment!
-  deleteReport(id: ObjectId!): ObjectId!
+  deleteReport(id: ObjectId!): GenericResponse!
   addReportComment(comment: AddReportCommentInput!): ReportComment!
   updateCommentLike(commentLike: UpdateCommentLikeInput!): ReportCommentUnion!
 }

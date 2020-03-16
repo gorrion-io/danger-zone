@@ -1,14 +1,16 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { ReturnModelType } from '@typegoose/typegoose';
+import { ObjectId } from 'bson';
+import { ICurrentUser } from '../auth/interfaces/current-user.interface';
+import { ErrorResponse } from '../common/graphql-generic-responses/error-response.model';
+import { SuccessResponse } from '../common/graphql-generic-responses/success-response.model';
 import { ObjectIdScalar } from '../common/graphql-scalars/object-id.scalar';
+import { User } from '../users/models/user.schema';
+import { UsersService } from '../users/users.service';
 import { AddReportInput } from './models/add-report.input';
 import { EditReportInput } from './models/edit-report.input';
 import { Report } from './models/report.schema';
-import { ICurrentUser } from '../auth/interfaces/current-user.interface';
-import { User } from '../users/models/user.schema';
-import { UsersService } from '../users/users.service';
-import { ObjectId } from 'bson';
 
 @Injectable()
 export class ReportsService {
@@ -59,15 +61,15 @@ export class ReportsService {
     return report.save();
   }
 
-  async delete(id: ObjectIdScalar): Promise<ObjectIdScalar> {
+  async delete(id: ObjectIdScalar): Promise<SuccessResponse | ErrorResponse> {
     const report = await this.reportModel.findById(id);
     if (!report) {
-      throw new Error(`Report with id: "${id}" not found.`);
+      return new ErrorResponse(`Report with id: "${id}" not found.`);
     }
 
     report.isDeleted = true;
     report.save();
 
-    return report.id;
+    return new SuccessResponse(report.id);
   }
 }
