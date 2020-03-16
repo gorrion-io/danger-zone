@@ -1,22 +1,18 @@
 import { Inject } from '@nestjs/common';
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
-import { AuthService } from './auth.service';
-import { Token } from './models/token.model';
-import { RegisterUserInput } from './models/register-user.input';
-import { SuccessResponse } from '../common/graphql-generic-responses/success-response.model';
-import { MagicLinkInput } from './models/magic-link.input';
 import { ErrorResponse } from '../common/graphql-generic-responses/error-response.model';
-import { TokenUnion } from './unions/token.union';
-import { GetTokenInput } from './models/get-token.input';
-import { SendgridService } from '../sendgrid/sendgrid.service';
+import { SuccessResponse } from '../common/graphql-generic-responses/success-response.model';
 import { GenericResponseUnion } from '../common/unions/generic-response.union';
+import { AuthService } from './auth.service';
+import { GetTokenInput } from './models/get-token.input';
+import { MagicLinkInput } from './models/magic-link.input';
+import { RegisterUserInput } from './models/register-user.input';
+import { Token } from './models/token.model';
+import { TokenUnion } from './unions/token.union';
 
 @Resolver()
 export class AuthResolver {
-  constructor(
-    @Inject(AuthService) private readonly authService: AuthService,
-    @Inject(SendgridService) private readonly sendgridService: SendgridService,
-  ) {}
+  constructor(@Inject(AuthService) private readonly authService: AuthService) {}
 
   @Mutation(() => GenericResponseUnion)
   async register(

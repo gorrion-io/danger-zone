@@ -1,5 +1,13 @@
 import { Inject, UseGuards } from '@nestjs/common';
-import { Args, Context, Mutation, Query, Resolver, ResolveProperty, Parent } from '@nestjs/graphql';
+import {
+  Args,
+  Context,
+  Mutation,
+  Query,
+  Resolver,
+  ResolveProperty,
+  Parent,
+} from '@nestjs/graphql';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { AuthGuard } from '../auth/guards/user-auth.guard';
 import { ICurrentUser } from '../auth/interfaces/current-user.interface';
@@ -10,6 +18,9 @@ import { EditReportInput } from './models/edit-report.input';
 import { Report } from './models/report.schema';
 import { ReportsService } from './reports.service';
 import { User } from '../users/models/user.schema';
+import { GenericResponseUnion } from '../common/unions/generic-response.union';
+import { SuccessResponse } from '../common/graphql-generic-responses/success-response.model';
+import { ErrorResponse } from '../common/graphql-generic-responses/error-response.model';
 @Resolver(() => Report)
 @UseGuards(AuthGuard)
 export class ReportsResolver {
@@ -18,8 +29,8 @@ export class ReportsResolver {
   ) {}
 
   @ResolveProperty(type => User)
-    async reportedBy(@Parent() report: Report): Promise<User> {
-      return this.reportsService.resolveUser(report.reportedBy);
+  async reportedBy(@Parent() report: Report): Promise<User> {
+    return this.reportsService.resolveUser(report.reportedBy);
   }
   @Roles(Role.StandardUser)
   @Query(() => [Report])
@@ -52,8 +63,10 @@ export class ReportsResolver {
   }
 
   @Roles(Role.Admin)
-  @Mutation(() => ObjectIdScalar)
-  async deleteReport(@Args('id') id: ObjectIdScalar): Promise<ObjectIdScalar> {
+  @Mutation(() => GenericResponseUnion)
+  async deleteReport(
+    @Args('id') id: ObjectIdScalar,
+  ): Promise<SuccessResponse | ErrorResponse> {
     return this.reportsService.delete(id);
   }
 }
