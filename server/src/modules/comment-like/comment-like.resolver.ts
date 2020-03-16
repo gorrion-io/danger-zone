@@ -15,6 +15,7 @@ import { ErrorResponse } from '../common/graphql-generic-responses/error-respons
 import { AuthGuard } from '../auth/guards/user-auth.guard';
 import { ReportComment } from '../report-comments/models/report-comment.schema';
 import { ReportCommentUnion } from '../report-comments/unions/report-comment.union';
+import { PUB_SUB } from '../../utils/constants/pub-sub.const';
 
 @Resolver()
 @UseGuards(AuthGuard)
@@ -22,7 +23,7 @@ export class CommentLikeResolver {
   constructor(
     @Inject(CommentLikeService)
     private readonly commentLikeService: CommentLikeService,
-    @Inject('PUB_SUB')
+    @Inject(PUB_SUB)
     private readonly pubSub: PubSub,
   ) {}
 

@@ -9,6 +9,8 @@ import { ReportComment } from './models/report-comment.schema';
 import { ErrorResponse } from '../common/graphql-generic-responses/error-response.model';
 import { ObjectId } from 'bson';
 import { FindAllCommentsInput } from './models/find-all-comments.input';
+import { ObjectIdAdapt } from '../common/custom-types/object-id-adapt.type';
+
 @Injectable()
 export class ReportCommentsService {
   constructor(
@@ -22,7 +24,7 @@ export class ReportCommentsService {
       .exec();
   }
 
-  async findOne(id: ObjectIdScalar | ObjectId): Promise<ReportComment> {
+  async findOne(id: ObjectIdAdapt): Promise<ReportComment> {
     return this.commentModel.findById(id);
   }
 

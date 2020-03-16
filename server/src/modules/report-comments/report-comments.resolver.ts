@@ -24,6 +24,7 @@ import { LikeType } from '../comment-like/models/like-type.enum';
 import { CommentLikeService } from '../comment-like/comment-like.service';
 import { FindAllCommentsInput } from './models/find-all-comments.input';
 import { CommentSubInput } from './models/comment-sub.input';
+import { PUB_SUB } from '../../utils/constants/pub-sub.const';
 
 const commentSubFilter = (payloadComment, variables) => {
   const pReportId: ObjectId = payloadComment.reportId;
@@ -47,7 +48,7 @@ export class ReportCommentsResolver {
     private readonly usersService: UsersService,
     @Inject(CommentLikeService)
     private readonly commentLikeService: CommentLikeService,
-    @Inject('PUB_SUB')
+    @Inject(PUB_SUB)
     private readonly pubSub: PubSub,
   ) {}
 
