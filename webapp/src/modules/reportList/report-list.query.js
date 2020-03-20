@@ -9,6 +9,8 @@ export const GET_ALL_REPORTS = gql`
       reportedBy {
         userName
       }
+      latitude
+      longitude
     }
   }
 `;
